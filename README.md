@@ -1,4 +1,4 @@
-# MyCoDAO
+# MycoDAO
 
 Next.js project. Dev server runs on port 3004.
 
@@ -10,19 +10,6 @@ npm run dev
 ```
 
 Open [http://localhost:3004](http://localhost:3004).
-
-## GitHub
-
-To connect to an existing GitHub repo:
-
-```bash
-git remote add origin https://github.com/YOUR_USERNAME/mycodao.git
-git add .
-git commit -m "Initial commit"
-git push -u origin main
-```
-
-If the repo is empty, create it on GitHub first, then run the above.
 
 ## Scripts
 
