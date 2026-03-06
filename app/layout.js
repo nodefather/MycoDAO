@@ -1,7 +1,7 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "MyCoDAO",
+  title: "MycoDAO",
   description: "MyCoDAO — Community-driven platform",
 };
 
