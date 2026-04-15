@@ -4,7 +4,7 @@
 
 | URL | App |
 |-----|-----|
-| `https://pulse.mycodao.com/` | MycoDAO Next.js home |
+| `https://pulse.mycodao.com/` | Redirects to **`/pulse`** (middleware) |
 | `https://pulse.mycodao.com/pulse` | **Pulse dashboard** (main UI) |
 
 `NEXT_PUBLIC_BASE_PATH` should stay **empty** for root hosting on this hostname (`next.config.mjs`).
@@ -34,9 +34,21 @@
    ```
 6. First deploy: Caddy may take a minute to obtain TLS. Check `docker compose logs -f caddy`.
 
-## DNS (Cloudflare)
+## Cloudflare Tunnel (recommended for LAN / no public 80/443)
 
-- **A** record: `pulse` → origin server IP (VM public or tunnel target).
+Keeps **`mycodao.com` / `www` on Webflow** — only **`pulse`** is configured in Zero Trust. Full steps: **`docs/PULSE_CLOUDFLARE_TUNNEL_SETUP_APR14_2026.md`**.
+
+```bash
+# In .env.production: CLOUDFLARE_TUNNEL_TOKEN=<token from Zero Trust>
+docker compose up -d --build
+docker compose --profile tunnel up -d
+```
+
+Public hostname in the tunnel UI: service **`http://mycodao:3004`** (same Docker network as the app).
+
+## DNS (Cloudflare) — direct origin (no tunnel)
+
+- **A** record: `pulse` → origin server IP (VM public).
 - SSL mode: **Full (strict)** if origin presents a valid cert (Caddy LE), or **Flexible** only if you terminate TLS only at Cloudflare (not recommended for API security).
 
 ## Test from your PC

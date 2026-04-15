@@ -1,7 +1,15 @@
 /** @type {import('next/server').NextRequest} */
 import { NextResponse } from "next/server";
 
+const PULSE_HOST = "pulse.mycodao.com";
+
 export function middleware(request) {
+  const host = request.headers.get("host")?.split(":")[0] ?? "";
+  // Live Pulse hostname: send / to the dashboard (Cloudflare Tunnel or direct).
+  if (host === PULSE_HOST && request.nextUrl.pathname === "/") {
+    return NextResponse.redirect(new URL("/pulse", request.url));
+  }
+
   // In dev, app is served at / (no basePath). Redirect /mycodao.financial -> / so old links work.
   if (process.env.NODE_ENV !== "production" && request.nextUrl.pathname.startsWith("/mycodao.financial")) {
     const path = request.nextUrl.pathname.slice("/mycodao.financial".length) || "/";
@@ -13,5 +21,5 @@ export function middleware(request) {
 }
 
 export const config = {
-  matcher: ["/mycodao.financial", "/mycodao.financial/:path*"],
+  matcher: ["/", "/mycodao.financial", "/mycodao.financial/:path*"],
 };

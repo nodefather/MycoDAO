@@ -13,7 +13,7 @@ npm install
 npm run dev
 ```
 
-Production hostname: **pulse.mycodao.com** (see `docs/PULSE_MYCODAO_COM_DEPLOY_AND_TEST_APR14_2026.md`). Local: [http://localhost:3004/](http://localhost:3004/) — Pulse dashboard: [http://localhost:3004/pulse](http://localhost:3004/pulse).
+Production hostname: **pulse.mycodao.com** — deploy: `docs/PULSE_MYCODAO_COM_DEPLOY_AND_TEST_APR14_2026.md`; **Cloudflare Tunnel** (only the `pulse` host; leaves **mycodao.com / www Webflow** unchanged): `docs/PULSE_CLOUDFLARE_TUNNEL_SETUP_APR14_2026.md`. Local: [http://localhost:3004/](http://localhost:3004/) — Pulse dashboard: [http://localhost:3004/pulse](http://localhost:3004/pulse).
 
 ## Scripts
 

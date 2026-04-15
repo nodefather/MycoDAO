@@ -1,6 +1,8 @@
 # MycoDAO on Proxmox VM (192.168.0.198) — Pulse at https://pulse.mycodao.com
 # App: `docker compose up -d --build`  (HTTP on host :3004)
 # TLS:  `docker compose --profile tls up -d --build`  (needs deploy/Caddyfile + DNS → this host)
+# Tunnel: `docker compose --profile tunnel up -d --build` — Cloudflare Tunnel to app :3004 (see docs).
+#   Does not change mycodao.com / www (Webflow); only `pulse.mycodao.com` in Zero Trust + DNS.
 #
 # Copy `.env.production` from `.env.example` on the server; never commit secrets.
 
@@ -38,6 +40,20 @@ services:
       - mycodao
     profiles:
       - tls
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: mycodao-cloudflared
+    restart: unless-stopped
+    command: tunnel run
+    environment:
+      TUNNEL_TOKEN: ${CLOUDFLARE_TUNNEL_TOKEN}
+    depends_on:
+      - mycodao
+    networks:
+      - mycodao
+    profiles:
+      - tunnel
 
 networks:
   mycodao:
