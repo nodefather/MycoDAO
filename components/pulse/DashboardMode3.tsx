@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useState, useEffect } from "react";
 import PulseModule from "@/components/pulse/PulseModule";
 import TickerRow from "@/components/pulse/TickerRow";
@@ -9,6 +10,13 @@ import PodcastRow from "@/components/pulse/PodcastRow";
 import StatusModule from "@/components/pulse/StatusModule";
 import { usePulse } from "@/lib/pulse-provider";
 import { useDashboardMode } from "@/lib/dashboard-mode-context";
+
+const MarketChart = dynamic(() => import("@/components/pulse/MarketChart"), {
+  ssr: false,
+  loading: () => (
+    <div className="flex items-center justify-center min-h-[200px] text-xs text-stone-500">Loading chart…</div>
+  ),
+});
 
 const FOCUS_OPTIONS = ["myco", "podcast", "news", "chart"] as const;
 type FocusOption = (typeof FOCUS_OPTIONS)[number];
@@ -30,20 +38,20 @@ export default function DashboardMode3() {
   if (loading) {
     return (
       <div className="h-full flex items-center justify-center bg-stone-950 p-[2px]">
-        <p className="text-stone-500 text-[10px]">Loading…</p>
+        <p className="text-stone-500 text-sm">Loading…</p>
       </div>
     );
   }
 
   return (
-    <main className="flex-1 min-h-0 overflow-hidden p-[2px] grid grid-cols-12 gap-[2px]" style={{ gridTemplateRows: "minmax(0,1fr) auto" }}>
+    <main className="flex-1 min-h-0 min-w-0 overflow-y-auto overflow-x-hidden p-1.5 sm:p-2 grid grid-cols-12 gap-1.5 sm:gap-2" style={{ gridTemplateRows: "minmax(0,1fr) auto" }}>
       {/* Large focus area */}
       <div className="col-span-12 md:col-span-8 min-h-0 overflow-hidden flex flex-col">
         <div className="flex items-center justify-between border-b border-stone-700 px-[2px] py-[2px] bg-stone-900/80 shrink-0">
-          <span className="text-[10px] font-semibold uppercase text-stone-400">Focus</span>
+          <span className="text-xs font-semibold uppercase text-stone-400">Focus</span>
           <div className="flex gap-0.5">
-            <button type="button" onClick={goPrev} className="px-1.5 py-0.5 text-[10px] text-stone-400 hover:text-stone-200 border border-stone-600 rounded" aria-label="Previous">←</button>
-            <button type="button" onClick={goNext} className="px-1.5 py-0.5 text-[10px] text-stone-400 hover:text-stone-200 border border-stone-600 rounded" aria-label="Next">→</button>
+            <button type="button" onClick={goPrev} className="px-1.5 py-0.5 text-xs text-stone-400 hover:text-stone-200 border border-stone-600 rounded min-h-[36px] min-w-[36px]" aria-label="Previous">←</button>
+            <button type="button" onClick={goNext} className="px-1.5 py-0.5 text-xs text-stone-400 hover:text-stone-200 border border-stone-600 rounded min-h-[36px] min-w-[36px]" aria-label="Next">→</button>
           </div>
         </div>
         <div className="flex-1 min-h-0 overflow-hidden p-[2px]">
@@ -52,7 +60,7 @@ export default function DashboardMode3() {
               <PulseModule title="MYCO Ecosystem" accent="amber" href="/pulse/myco">
                 <MycoEcosystemCompact snapshot={myco} />
               </PulseModule>
-              <div className="text-[10px] text-stone-500 p-1">
+              <div className="text-xs text-stone-500 p-1">
                 Price ${myco.price.toFixed(4)} · Supply {myco.supply.toLocaleString()} · Chain {myco.chain}
               </div>
             </div>
@@ -61,8 +69,8 @@ export default function DashboardMode3() {
             <PulseModule title="Featured Podcast" href="/pulse/podcasts">
               {podcasts[0] && (
                 <div className="p-1 space-y-0.5">
-                  <p className="text-[11px] font-semibold text-stone-200">{podcasts[0].title}</p>
-                  <p className="text-[10px] text-stone-500">{podcasts[0].show}</p>
+                  <p className="text-sm font-semibold text-stone-200">{podcasts[0].title}</p>
+                  <p className="text-xs text-stone-500">{podcasts[0].show}</p>
                   <PodcastRow episode={podcasts[0]} />
                 </div>
               )}
@@ -77,7 +85,9 @@ export default function DashboardMode3() {
           )}
           {focus === "chart" && (
             <PulseModule title="Market Chart">
-              <p className="text-[10px] text-stone-500 p-1">Large market chart placeholder</p>
+              <div className="min-h-[260px] h-full flex flex-col">
+                <MarketChart initialSymbol="BTC" />
+              </div>
             </PulseModule>
           )}
         </div>

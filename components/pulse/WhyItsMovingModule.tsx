@@ -31,13 +31,13 @@ export default function WhyItsMovingModule() {
               className="py-[1px] border-b border-neutral-800 last:border-0 leading-tight tabular-nums"
             >
               <div className="flex items-center gap-1 flex-wrap">
-                <span className="font-mono text-[10px] font-semibold text-stone-300 shrink-0">{ticker.symbol}</span>
-                <span className={`font-mono text-[10px] shrink-0 ${up ? "text-emerald-500" : "text-red-500"}`}>
+                <span className="font-mono text-xs font-semibold text-stone-300 shrink-0">{ticker.symbol}</span>
+                <span className={`font-mono text-xs shrink-0 ${up ? "text-emerald-500" : "text-red-500"}`}>
                   {up ? "▲" : "▼"} {up ? "+" : ""}{ticker.changePct.toFixed(2)}%
                 </span>
               </div>
               {reason && (
-                <p className="text-[8px] text-stone-500 truncate pl-0 mt-px" title={reason}>
+                <p className="text-xs text-stone-500 truncate pl-0 mt-px" title={reason}>
                   {reason}
                 </p>
               )}

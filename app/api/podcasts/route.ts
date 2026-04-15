@@ -1,8 +1,12 @@
 import { NextResponse } from "next/server";
-import { getMockPodcasts } from "@/lib/mock-data";
+import { fetchPodcastEpisodes } from "@/lib/adapters/podcasts";
 
-// TODO: Replace with real podcast RSS/API
 export async function GET() {
-  const podcasts = getMockPodcasts();
-  return NextResponse.json(podcasts);
+  try {
+    const podcasts = await fetchPodcastEpisodes();
+    return NextResponse.json(podcasts);
+  } catch (e) {
+    console.error("podcasts route:", e);
+    return NextResponse.json({ error: "podcasts_unavailable", detail: String(e) }, { status: 503 });
+  }
 }

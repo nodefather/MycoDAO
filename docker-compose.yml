@@ -1,0 +1,48 @@
+# MycoDAO on Proxmox VM (192.168.0.198) — Pulse at https://pulse.mycodao.com
+# App: `docker compose up -d --build`  (HTTP on host :3004)
+# TLS:  `docker compose --profile tls up -d --build`  (needs deploy/Caddyfile + DNS → this host)
+#
+# Copy `.env.production` from `.env.example` on the server; never commit secrets.
+
+services:
+  mycodao:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: mycodao:latest
+    container_name: mycodao-app
+    ports:
+      - "3004:3004"
+    env_file:
+      - .env.production
+    environment:
+      NODE_ENV: production
+    restart: unless-stopped
+    networks:
+      - mycodao
+
+  caddy:
+    image: caddy:2-alpine
+    container_name: mycodao-caddy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - mycodao
+    restart: unless-stopped
+    networks:
+      - mycodao
+    profiles:
+      - tls
+
+networks:
+  mycodao:
+    driver: bridge
+
+volumes:
+  caddy_data:
+  caddy_config:

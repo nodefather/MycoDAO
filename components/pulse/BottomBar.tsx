@@ -33,9 +33,9 @@ export default function BottomBar() {
   const dateStr = mounted && now ? now.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" }) : "---";
 
   return (
-    <footer className="shrink-0 h-[20px] border-t border-stone-700 bg-stone-950/95 backdrop-blur z-10">
-      <div className="flex items-center justify-between px-[2px] h-full">
-        <div className="flex items-center gap-2 text-[10px]">
+    <footer className="shrink-0 min-h-[32px] border-t border-stone-700 bg-stone-950/95 backdrop-blur z-10">
+      <div className="flex items-center justify-between px-2 py-1 h-full">
+        <div className="flex items-center gap-2 text-xs">
           <span className="font-mono text-stone-500 min-w-[3.5rem]" suppressHydrationWarning>
             {timeStr}
           </span>
@@ -53,7 +53,7 @@ export default function BottomBar() {
               key={m}
               type="button"
               onClick={() => setMode(m)}
-              className={`px-1 py-0.5 rounded text-[10px] font-medium transition-colors ${mode === m ? "bg-stone-700" : "text-stone-500 hover:text-stone-300"}`}
+              className={`min-h-[36px] min-w-[36px] px-2 py-1 rounded text-xs font-medium transition-colors ${mode === m ? "bg-stone-700" : "text-stone-500 hover:text-stone-300"}`}
               style={mode === m ? { color: "var(--accent-gold)" } : undefined}
               aria-pressed={mode === m}
               aria-label={m === 1 ? "Fixed terminal" : m === 2 ? "Rotating modules" : "Expanded focus"}
@@ -69,7 +69,7 @@ export default function BottomBar() {
               <Link
                 key={href}
                 href={href}
-                className={`px-1.5 py-0.5 rounded text-[10px] font-medium transition-colors ${
+                className={`px-2 py-1 rounded text-xs font-medium min-h-[36px] inline-flex items-center transition-colors ${
                   active ? "bg-stone-700" : "text-stone-500 hover:text-stone-300"
                 }`}
                 style={active ? { color: "var(--accent-gold)" } : undefined}

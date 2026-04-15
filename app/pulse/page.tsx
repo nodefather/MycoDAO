@@ -34,17 +34,17 @@ export default function PulsePage() {
   if (loading) {
     return (
       <div className="h-full flex flex-col min-h-0 overflow-hidden bg-stone-950 text-stone-200">
-        <header className="shrink-0 h-[20px] flex items-center justify-between px-[2px] border-b border-stone-700 bg-stone-950">
-          <div className="flex items-center gap-1.5">
-            <Link href="/" className="text-[9px] font-medium tracking-wide shrink-0 hover:opacity-80 transition-opacity" style={{ color: "var(--accent-gold)" }}>
+        <header className="shrink-0 min-h-[28px] flex items-center justify-between px-2 py-1 border-b border-stone-700 bg-stone-950">
+          <div className="flex items-center gap-2">
+            <Link href="/" className="text-xs font-medium tracking-wide shrink-0 hover:opacity-80 transition-opacity" style={{ color: "var(--accent-gold)" }}>
               MycoDAO
             </Link>
             <span className="text-stone-600">|</span>
-            <h1 className="text-[10px] font-semibold text-stone-100 uppercase tracking-wide">Market Pulse</h1>
+            <h1 className="text-sm font-semibold text-stone-100 uppercase tracking-wide">Market Pulse</h1>
           </div>
         </header>
-        <div className="flex-1 flex items-center justify-center p-[2px]">
-          <p className="text-stone-500 text-[10px]">Loading…</p>
+        <div className="flex-1 flex items-center justify-center p-2">
+          <p className="text-stone-500 text-sm">Loading…</p>
         </div>
       </div>
     );
@@ -52,13 +52,13 @@ export default function PulsePage() {
 
   return (
     <div className="h-full flex flex-col min-h-0 overflow-hidden bg-stone-950 text-stone-200">
-      <header className="shrink-0 h-[20px] flex items-center justify-between px-[2px] border-b border-stone-700 bg-stone-950">
-        <div className="flex items-center gap-1.5">
-          <Link href="/" className="text-[9px] font-medium tracking-wide shrink-0 hover:opacity-80 transition-opacity" style={{ color: "var(--accent-gold)" }}>
+      <header className="shrink-0 min-h-[28px] flex items-center justify-between px-2 py-1 border-b border-stone-700 bg-stone-950">
+        <div className="flex items-center gap-2">
+          <Link href="/" className="text-xs font-medium tracking-wide shrink-0 hover:opacity-80 transition-opacity" style={{ color: "var(--accent-gold)" }}>
             MycoDAO
           </Link>
           <span className="text-stone-600">|</span>
-          <h1 className="text-[10px] font-semibold text-stone-100 uppercase tracking-wide">Market Pulse</h1>
+          <h1 className="text-sm font-semibold text-stone-100 uppercase tracking-wide">Market Pulse</h1>
         </div>
       </header>
 

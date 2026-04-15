@@ -1,8 +1,12 @@
 import { NextResponse } from "next/server";
-import { getMockLearn } from "@/lib/mock-data";
+import { fetchLearnModules } from "@/lib/adapters/learn";
 
-// TODO: Replace with CMS/content API
 export async function GET() {
-  const modules = getMockLearn();
-  return NextResponse.json(modules);
+  try {
+    const modules = await fetchLearnModules();
+    return NextResponse.json(modules);
+  } catch (e) {
+    console.error("learn route:", e);
+    return NextResponse.json({ error: "learn_unavailable", detail: String(e) }, { status: 503 });
+  }
 }

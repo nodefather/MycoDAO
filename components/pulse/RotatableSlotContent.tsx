@@ -102,7 +102,7 @@ export default function RotatableSlotContent({ moduleId, onShown }: RotatableSlo
       default:
         return (
           <PulseModule title={moduleId}>
-            <p className="text-[10px] text-stone-500 p-[2px]">—</p>
+            <p className="text-xs text-stone-500 p-[2px]">—</p>
           </PulseModule>
         );
     }

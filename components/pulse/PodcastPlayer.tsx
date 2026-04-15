@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import type { PodcastEpisode } from "@/lib/types";
 
 type PodcastPlayerProps = {
@@ -15,21 +14,20 @@ function formatDuration(sec: number): string {
 }
 
 export default function PodcastPlayer({ episode, className = "" }: PodcastPlayerProps) {
-  const [playing, setPlaying] = useState(false);
+  const hasAudio = Boolean(episode.audioUrl?.trim());
 
   return (
     <div className={`rounded border border-stone-700 bg-stone-900/80 p-4 ${className}`}>
       <h3 className="text-sm font-semibold text-stone-200">{episode.title}</h3>
-      <p className="text-xs text-stone-500 mt-1">{episode.show} · {formatDuration(episode.durationSec)}</p>
+      <p className="text-xs text-stone-500 mt-1">
+        {episode.show} · {formatDuration(episode.durationSec)}
+      </p>
       <p className="text-xs text-stone-400 mt-2 line-clamp-2">{episode.description}</p>
-      <button
-        type="button"
-        onClick={() => setPlaying((p) => !p)}
-        className="mt-3 px-4 py-2 rounded border border-stone-600 text-xs font-medium text-stone-300 hover:bg-stone-800"
-      >
-        {playing ? "Pause" : "Play"}
-      </button>
-      {/* TODO: Wire to real audio element when audioUrl is available */}
+      {hasAudio ? (
+        <audio src={episode.audioUrl} className="mt-3 w-full" controls preload="metadata" />
+      ) : (
+        <p className="mt-3 text-xs text-stone-500">No audio URL for this episode.</p>
+      )}
     </div>
   );
 }

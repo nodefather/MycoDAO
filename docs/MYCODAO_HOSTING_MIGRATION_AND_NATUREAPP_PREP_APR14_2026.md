@@ -3,7 +3,8 @@
 **Status:** Preparation  
 **Local repo:** `C:\Users\admin2\Desktop\MYCOSOFT\CODE\MYCODAO`  
 **Canonical GitHub (target):** [MycosoftLabs/MYCODAO](https://github.com/MycosoftLabs/MYCODAO)  
-**Dashboard source (fork):** [nodefather/MycoDAO](https://github.com/nodefather/MycoDAO) (fork of [abelardomyco/MycoDAO](https://github.com/abelardomyco/MycoDAO))
+**Dashboard source (fork):** [nodefather/MycoDAO](https://github.com/nodefather/MycoDAO) (fork of [abelardomyco/MycoDAO](https://github.com/abelardomyco/MycoDAO))  
+**Dashboard + Figma phases:** [DASHBOARD_PHASE1_AND_FIGMA_NEXT_PHASE_APR14_2026.md](./DASHBOARD_PHASE1_AND_FIGMA_NEXT_PHASE_APR14_2026.md)
 
 ---
 

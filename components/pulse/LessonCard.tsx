@@ -13,7 +13,7 @@ export default function LessonCard({ module: m }: LessonCardProps) {
       href={`/learn/${m.id}`}
       className="block rounded border border-stone-700 bg-stone-900/80 p-4 hover:border-stone-600 transition-colors"
     >
-      <div className="flex items-center gap-2 text-[10px] text-stone-500 mb-2">
+      <div className="flex items-center gap-2 text-xs text-stone-500 mb-2">
         <span className="capitalize">{m.level}</span>
         <span>·</span>
         <span>{m.readingTimeMin} min</span>

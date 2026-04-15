@@ -1,0 +1,7 @@
+# Same as committed `deploy/Caddyfile`. Use: `docker compose --profile tls up -d`
+# TLS: Let's Encrypt when 80/443 are reachable; behind Cloudflare use Full (strict) with valid origin cert.
+
+pulse.mycodao.com {
+    encode gzip zstd
+    reverse_proxy mycodao:3004
+}

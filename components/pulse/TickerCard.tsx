@@ -27,11 +27,11 @@ export default function TickerCard({ ticker, compact }: TickerCardProps) {
     >
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-1.5 min-w-0">
-          <span className={`font-mono font-semibold text-stone-300 truncate ${compact ? "text-[10px]" : "text-xs"}`}>{ticker.symbol}</span>
+          <span className="font-mono font-semibold text-stone-300 truncate text-xs">{ticker.symbol}</span>
           {isMyco && (
             <Link
               href="/token"
-              className="text-[10px] hover:opacity-80 transition-opacity truncate"
+              className="text-xs hover:opacity-80 transition-opacity truncate"
         style={{ color: "var(--accent-gold)" }}
               title="MYCO token page"
             >
@@ -40,8 +40,8 @@ export default function TickerCard({ ticker, compact }: TickerCardProps) {
           )}
         </div>
         <div className="text-right shrink-0">
-          <span className={`font-mono text-stone-100 tabular-nums ${compact ? "text-[10px]" : "text-xs"}`}>{formatPrice(ticker.price, ticker.symbol)}</span>
-          <span className={`ml-0.5 font-mono tabular-nums ${compact ? "text-[9px]" : "text-[10px]"} ${up ? "text-emerald-500" : "text-red-500"}`}>
+          <span className="font-mono text-stone-100 tabular-nums text-xs">{formatPrice(ticker.price, ticker.symbol)}</span>
+          <span className={`ml-0.5 font-mono tabular-nums text-xs ${up ? "text-emerald-500" : "text-red-500"}`}>
             {up ? "+" : ""}{ticker.changePct.toFixed(2)}%
           </span>
         </div>

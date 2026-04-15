@@ -17,7 +17,7 @@ export default function BiobankActivityModule({ data }: BiobankActivityModulePro
   if (!data) {
     return (
       <PulseModule title="Biobank Activity" accent="amber" href="/pulse/myco">
-        <p className="text-[10px] text-stone-500 py-0.5">Loading…</p>
+        <p className="text-xs text-stone-500 py-0.5">Loading…</p>
       </PulseModule>
     );
   }
@@ -36,8 +36,8 @@ export default function BiobankActivityModule({ data }: BiobankActivityModulePro
             key={label}
             className="flex items-center justify-between gap-1 py-[1px] border-b border-neutral-800 last:border-0 leading-tight tabular-nums"
           >
-            <span className="text-[10px] text-stone-500 truncate">{label}</span>
-            <span className="font-mono text-[10px] text-stone-200 tabular-nums shrink-0">{value}</span>
+            <span className="text-xs text-stone-500 truncate">{label}</span>
+            <span className="font-mono text-xs text-stone-200 tabular-nums shrink-0">{value}</span>
           </div>
         ))}
       </div>

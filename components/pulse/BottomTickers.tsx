@@ -41,10 +41,10 @@ export default function BottomTickers({
     <div className={`shrink-0 flex flex-col border-t border-stone-700 bg-stone-950 ${className}`} aria-label="Bottom tickers">
       {/* Market Tape — faster */}
       <div
-        className="flex items-center gap-3 overflow-hidden border-b border-stone-800 h-[18px] px-[2px] text-[10px] leading-tight tabular-nums"
+        className="flex items-center gap-3 overflow-hidden border-b border-stone-800 min-h-[26px] px-2 py-0.5 text-xs leading-snug tabular-nums"
         aria-label="Market tape"
       >
-        <span className="shrink-0 font-bold uppercase text-stone-500 text-[9px]">Tape</span>
+        <span className="shrink-0 font-bold uppercase text-stone-500 text-xs">Tape</span>
         {marketTickers.map((t) => {
           const up = t.changePct >= 0;
           return (
@@ -60,21 +60,21 @@ export default function BottomTickers({
       </div>
       {/* Catalyst / News Tape — slower */}
       <div
-        className="flex items-center gap-2 overflow-hidden h-[18px] px-[2px] text-[10px] leading-tight"
+        className="flex items-center gap-2 overflow-hidden min-h-[26px] px-2 py-0.5 text-xs leading-snug"
         aria-label="Catalyst and news tape"
       >
-        <span className="shrink-0 font-bold uppercase text-stone-500 text-[9px]">Catalyst</span>
+        <span className="shrink-0 font-bold uppercase text-stone-500 text-xs">Catalyst</span>
         {catalystItems.map((n) => {
           const enriched = n as NewsWithIntelligence;
           const imp = enriched.importance;
           return (
             <span key={n.id} className="shrink-0 flex items-center gap-1">
               {imp && (
-                <span className={`text-[8px] ${imp === "high" ? "text-amber-500/90" : imp === "medium" ? "text-stone-500" : "text-stone-600"}`} title={imp}>
+                <span className={`text-xs ${imp === "high" ? "text-amber-500/90" : imp === "medium" ? "text-stone-500" : "text-stone-600"}`} title={imp}>
                   {importanceMarker(imp)}
                 </span>
               )}
-              <span className="text-stone-500 text-[9px]">{n.source}</span>
+              <span className="text-stone-500 text-xs">{n.source}</span>
               <span className="text-stone-300 truncate max-w-[180px]">{n.title}</span>
             </span>
           );

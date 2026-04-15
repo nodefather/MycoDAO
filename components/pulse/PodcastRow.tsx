@@ -22,14 +22,14 @@ export default function PodcastRow({ episode }: PodcastRowProps) {
       <button
         type="button"
         onClick={() => setPlaying((p) => !p)}
-        className="shrink-0 w-4 h-4 flex items-center justify-center rounded border border-stone-600 text-[8px] text-stone-400 hover:text-stone-200 hover:border-stone-500"
+        className="shrink-0 w-4 h-4 flex items-center justify-center rounded border border-stone-600 text-xs text-stone-400 hover:text-stone-200 hover:border-stone-500"
         aria-label={playing ? "Pause" : "Play"}
       >
         {playing ? "⏸" : "▶"}
       </button>
       <Link href="/pulse/podcasts" className="min-w-0 flex-1">
-        <span className="text-[10px] text-stone-200 line-clamp-1 block">{episode.title}</span>
-        <span className="text-[10px] text-stone-500">{episode.show} · {formatDuration(episode.durationSec)}</span>
+        <span className="text-xs text-stone-200 line-clamp-1 block">{episode.title}</span>
+        <span className="text-xs text-stone-500">{episode.show} · {formatDuration(episode.durationSec)}</span>
       </Link>
     </div>
   );

@@ -59,35 +59,35 @@ export default function PanelCarousel({
       <div className="flex-1 min-h-0 p-[2px] overflow-hidden leading-tight tabular-nums">
         {panel === "market" && (
           <div className="space-y-0.5">
-            <h3 className="text-[10px] font-bold text-stone-400 uppercase">Market Overview</h3>
-            <p className="text-[11px] text-stone-300">BTC, ETH, SOL, TradFi. MYCO in Bio.</p>
+            <h3 className="text-xs font-bold text-stone-400 uppercase">Market Overview</h3>
+            <p className="text-xs text-stone-300">BTC, ETH, SOL, TradFi. MYCO in Bio.</p>
           </div>
         )}
         {panel === "news" && (
           <div className="space-y-0.5">
-            <h3 className="text-[10px] font-bold text-stone-400 uppercase">Breaking News</h3>
+            <h3 className="text-xs font-bold text-stone-400 uppercase">Breaking News</h3>
             {news[0] && <NewsCard item={news[0]} />}
             {news[1] && <NewsCard item={news[1]} compact />}
           </div>
         )}
         {panel === "podcast" && (
           <div className="space-y-0.5">
-            <h3 className="text-[10px] font-bold text-stone-400 uppercase">Podcast</h3>
+            <h3 className="text-xs font-bold text-stone-400 uppercase">Podcast</h3>
             {podcasts[0] && (
               <div className="rounded border border-stone-700 p-1">
-                <p className="text-[10px] font-semibold text-stone-200">{podcasts[0].title}</p>
-                <p className="text-[9px] text-stone-500">{podcasts[0].show}</p>
+                <p className="text-xs font-semibold text-stone-200">{podcasts[0].title}</p>
+                <p className="text-xs text-stone-500">{podcasts[0].show}</p>
               </div>
             )}
           </div>
         )}
         {panel === "learn" && (
           <div className="space-y-0.5">
-            <h3 className="text-[10px] font-bold text-stone-400 uppercase">Learn</h3>
+            <h3 className="text-xs font-bold text-stone-400 uppercase">Learn</h3>
             {learn[0] && (
               <div className="rounded border border-stone-700 p-1">
-                <p className="text-[10px] font-semibold text-stone-200">{learn[0].title}</p>
-                <p className="text-[9px] text-stone-500 line-clamp-2">{learn[0].summary}</p>
+                <p className="text-xs font-semibold text-stone-200">{learn[0].title}</p>
+                <p className="text-xs text-stone-500 line-clamp-2">{learn[0].summary}</p>
               </div>
             )}
           </div>
@@ -99,7 +99,7 @@ export default function PanelCarousel({
           <button
             type="button"
             onClick={goPrev}
-            className="px-1.5 py-0.5 text-[10px] font-medium text-stone-400 hover:text-stone-200 border border-stone-600 rounded"
+            className="px-1.5 py-0.5 text-xs font-medium text-stone-400 hover:text-stone-200 border border-stone-600 rounded"
             aria-label="Previous panel"
           >
             ←
@@ -107,7 +107,7 @@ export default function PanelCarousel({
           <button
             type="button"
             onClick={goNext}
-            className="px-1.5 py-0.5 text-[10px] font-medium text-stone-400 hover:text-stone-200 border border-stone-600 rounded"
+            className="px-1.5 py-0.5 text-xs font-medium text-stone-400 hover:text-stone-200 border border-stone-600 rounded"
             aria-label="Next panel"
           >
             →
@@ -115,13 +115,13 @@ export default function PanelCarousel({
           <button
             type="button"
             onClick={() => setPaused((p) => !p)}
-            className="px-1.5 py-0.5 text-[10px] font-medium text-stone-400 hover:text-stone-200 border border-stone-600 rounded"
+            className="px-1.5 py-0.5 text-xs font-medium text-stone-400 hover:text-stone-200 border border-stone-600 rounded"
             aria-label={paused ? "Resume" : "Pause"}
           >
             {paused ? "▶" : "⏸"}
           </button>
         </div>
-        <span className="text-[10px] text-stone-500">
+        <span className="text-xs text-stone-500">
           {index + 1} / {PANELS.length}
         </span>
       </div>

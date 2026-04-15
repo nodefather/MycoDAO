@@ -6,14 +6,14 @@
 import type { Ticker, NewsItem, MycoSnapshot } from "@/lib/types";
 import type { NewsWithIntelligence } from "@/lib/news-intelligence";
 import { enrichNewsWithIntelligence, classifyNews, getHeadlinesForMover } from "@/lib/news-intelligence";
-import type { MoverInsight, HeadlineInsight, ResearchMetricsInsight, GovernanceInsight } from "./insight-types";
-import {
-  freshnessScore,
-  urgencyFromMove,
-  impactFromImportance,
-  defaultScores,
-  type InsightScores,
-} from "./scoring";
+import type {
+  MoverInsight,
+  HeadlineInsight,
+  ResearchMetricsInsight,
+  GovernanceInsight,
+  InsightScores,
+} from "./insight-types";
+import { freshnessScore, urgencyFromMove, impactFromImportance, defaultScores } from "./scoring";
 
 export type InsightInputs = {
   tickers: Ticker[];

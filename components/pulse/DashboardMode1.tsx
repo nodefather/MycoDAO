@@ -11,6 +11,7 @@ import PodcastRow from "@/components/pulse/PodcastRow";
 import LessonRow from "@/components/pulse/LessonRow";
 import ResearchRow from "@/components/pulse/ResearchRow";
 import CalendarEventsModule from "@/components/pulse/CalendarEventsModule";
+import PulseInsightsModule from "@/components/pulse/PulseInsightsModule";
 import QuickLinksModule from "@/components/pulse/QuickLinksModule";
 import StatusModule from "@/components/pulse/StatusModule";
 import MycoEcosystemCompact from "@/components/pulse/MycoEcosystemCompact";
@@ -44,13 +45,13 @@ export default function DashboardMode1() {
   if (loading) {
     return (
       <div className="h-full flex items-center justify-center bg-stone-950 p-[2px]">
-        <p className="text-stone-500 text-[10px]">Loading…</p>
+        <p className="text-stone-500 text-sm">Loading…</p>
       </div>
     );
   }
 
   return (
-    <main className="flex-1 min-h-0 overflow-hidden p-[2px] grid grid-cols-12 gap-[2px]" style={{ gridTemplateRows: "repeat(5, minmax(0, 1fr))" }}>
+    <main className="flex-1 min-h-0 min-w-0 overflow-y-auto overflow-x-hidden p-1.5 sm:p-2 grid grid-cols-12 gap-1.5 sm:gap-2" style={{ gridTemplateRows: "repeat(5, minmax(0, 1fr))" }}>
       <div className="col-span-12 md:col-span-4 min-h-0 overflow-hidden flex flex-col">
         <PulseModule title="Market Pulse">
           <PanelCarousel
@@ -69,7 +70,7 @@ export default function DashboardMode1() {
           {bySymbol(CRYPTO_SYMBOLS).map((t) => (
             <TickerRow key={t.id} ticker={t} />
           ))}
-          <Link href="/pulse/markets?category=crypto" className="block text-[10px] text-stone-500 hover:text-stone-300 shrink-0">All →</Link>
+          <Link href="/pulse/markets?category=crypto" className="block text-xs text-stone-500 hover:text-stone-300 shrink-0">All →</Link>
         </PulseModule>
       </div>
       <div className="col-span-12 md:col-span-2 min-h-0 overflow-hidden flex flex-col">
@@ -95,7 +96,7 @@ export default function DashboardMode1() {
           {bySymbol(BIO_SYMBOLS).map((t) => (
             <TickerRow key={t.id} ticker={t} />
           ))}
-          <Link href="/pulse/myco" className="block text-[10px] hover:opacity-80 shrink-0" style={{ color: "var(--accent-gold)" }}>MYCO →</Link>
+          <Link href="/pulse/myco" className="block text-xs hover:opacity-80 shrink-0" style={{ color: "var(--accent-gold)" }}>MYCO →</Link>
         </PulseModule>
       </div>
       <div className="col-span-12 md:col-span-3 min-h-0 overflow-hidden flex flex-col">
@@ -118,7 +119,7 @@ export default function DashboardMode1() {
           {news.slice(0, 7).map((n) => (
             <NewsHeadline key={n.id} item={n} enriched={enrichedNews.find((e) => e.id === n.id)} />
           ))}
-          <Link href="/pulse/news" className="block text-[10px] text-stone-500 hover:text-stone-300 shrink-0">All news →</Link>
+          <Link href="/pulse/news" className="block text-xs text-stone-500 hover:text-stone-300 shrink-0">All news →</Link>
         </PulseModule>
       </div>
       <div className="col-span-12 md:col-span-4 min-h-0 overflow-hidden flex flex-col">
@@ -126,7 +127,7 @@ export default function DashboardMode1() {
           {podcasts.slice(0, 5).map((p) => (
             <PodcastRow key={p.id} episode={p} />
           ))}
-          <Link href="/pulse/podcasts" className="block text-[10px] text-stone-500 hover:text-stone-300 shrink-0">All episodes →</Link>
+          <Link href="/pulse/podcasts" className="block text-xs text-stone-500 hover:text-stone-300 shrink-0">All episodes →</Link>
         </PulseModule>
       </div>
       <div className="col-span-12 md:col-span-4 min-h-0 overflow-hidden flex flex-col">
@@ -134,7 +135,7 @@ export default function DashboardMode1() {
           {learn.slice(0, 6).map((l) => (
             <LessonRow key={l.id} module={l} />
           ))}
-          <Link href="/pulse/learn" className="block text-[10px] text-stone-500 hover:text-stone-300 shrink-0">All lessons →</Link>
+          <Link href="/pulse/learn" className="block text-xs text-stone-500 hover:text-stone-300 shrink-0">All lessons →</Link>
         </PulseModule>
       </div>
 
@@ -143,7 +144,7 @@ export default function DashboardMode1() {
           {watchlistTickers.slice(0, 6).map((t) => (
             <TickerRow key={t.id} ticker={t} />
           ))}
-          <Link href="/pulse/markets" className="block text-[10px] text-stone-500 hover:text-stone-300 shrink-0">Markets →</Link>
+          <Link href="/pulse/markets" className="block text-xs text-stone-500 hover:text-stone-300 shrink-0">Markets →</Link>
         </PulseModule>
       </div>
       <div className="col-span-12 md:col-span-3 min-h-0 overflow-hidden flex flex-col">
@@ -176,6 +177,9 @@ export default function DashboardMode1() {
         <PulseModule title="Quick Links">
           <QuickLinksModule />
         </PulseModule>
+      </div>
+      <div className="col-span-12 md:col-span-3 min-h-0 overflow-hidden flex flex-col">
+        <PulseInsightsModule />
       </div>
       <div className="col-span-12 md:col-span-3 min-h-0 overflow-hidden flex flex-col">
         <PulseModule title="Status">

@@ -1,0 +1,7 @@
+# Reverse proxy for Pulse (MycoDAO Next.js) — used by `docker compose --profile tls up -d`
+# DNS: pulse.mycodao.com → this VM’s public IP (or Cloudflare orange-cloud with origin on 443).
+
+pulse.mycodao.com {
+    encode gzip zstd
+    reverse_proxy mycodao:3004
+}

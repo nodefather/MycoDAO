@@ -5,8 +5,8 @@ export async function GET() {
   try {
     const snapshot = await fetchMycoSnapshot();
     return NextResponse.json(snapshot);
-  } catch {
-    const { getMockMycoSnapshot } = await import("@/lib/mock-data");
-    return NextResponse.json(getMockMycoSnapshot());
+  } catch (e) {
+    console.error("myco route:", e);
+    return NextResponse.json({ error: "myco_unavailable", detail: String(e) }, { status: 503 });
   }
 }

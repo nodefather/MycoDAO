@@ -4,6 +4,7 @@ import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import TickerCard from "@/components/pulse/TickerCard";
 import { usePulse } from "@/lib/pulse-provider";
+import type { Ticker } from "@/lib/types";
 import Link from "next/link";
 
 const ASSET_CLASSES = ["all", "crypto", "metals", "commodity", "bio", "equity", "forex", "tech", "business", "indicators"] as const;
@@ -14,7 +15,7 @@ const BUSINESS_SYMBOLS = ["JPM", "GS", "BRK.B", "V", "MA", "UNH"];
 const INDICATORS_SYMBOLS = ["DXY", "SPY", "VIX", "US10Y"];
 const METALS_SYMBOLS = ["GOLD", "SILVER", "PLAT", "COPPER"];
 
-function filterByCategory(tickers: typeof import("@/lib/types").Ticker[], filter: FilterType) {
+function filterByCategory(tickers: Ticker[], filter: FilterType) {
   if (filter === "all") return tickers;
   if (filter === "tech") return tickers.filter((t) => TECH_SYMBOLS.includes(t.symbol));
   if (filter === "business") return tickers.filter((t) => BUSINESS_SYMBOLS.includes(t.symbol));

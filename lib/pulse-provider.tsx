@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from "react";
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo, useRef } from "react";
 import type { Ticker, NewsItem, PodcastEpisode, LearnModule, MycoSnapshot, ResearchItem } from "./types";
 import { classifyNews, enrichNewsWithIntelligence, buildWhyMovingMap, type NewsWithIntelligence, type WhyMoving } from "./news-intelligence";
 import { evaluateAlerts } from "./alerting";
@@ -9,6 +9,14 @@ import { generateAllInsights } from "./intelligence";
 import type { MoverInsight, HeadlineInsight, ResearchMetricsInsight, GovernanceInsight } from "./intelligence";
 import { normalizeAllEvents } from "./events";
 import type { UnifiedEvent } from "./events";
+import type { UpcomingCatalyst } from "./upcoming-catalysts";
+
+export interface TradeFeedMeta {
+  serverProcessMs?: number;
+  cacheHit?: boolean;
+  ts?: number;
+  sseConnected?: boolean;
+}
 
 type PulseContextValue = {
   tickers: Ticker[];
@@ -26,6 +34,8 @@ type PulseContextValue = {
   learn: LearnModule[];
   research: ResearchItem[];
   myco: MycoSnapshot | null;
+  /** Live calendar rows from `/api/calendar` (Finnhub / JSON / fallback per env). */
+  upcomingCatalysts: UpcomingCatalyst[];
   loading: boolean;
   refresh: () => Promise<void>;
   panelIntervalSec: number;
@@ -39,6 +49,8 @@ type PulseContextValue = {
   alerts: Alert[];
   dismissAlert: (id: string) => void;
   clearAlerts: () => void;
+  /** Last ticker stream tick (SSE); `serverProcessMs` is server-side merge time (often 1–5ms on LAN cache hit). */
+  tradeFeedMeta: TradeFeedMeta | null;
 };
 
 const PulseContext = createContext<PulseContextValue | null>(null);
@@ -57,6 +69,7 @@ const DEFAULT_PULSE_VALUE: PulseContextValue = {
   learn: [],
   research: [],
   myco: null,
+  upcomingCatalysts: [],
   loading: true,
   refresh: async () => {},
   panelIntervalSec: 12,
@@ -70,12 +83,24 @@ const DEFAULT_PULSE_VALUE: PulseContextValue = {
   alerts: [],
   dismissAlert: () => {},
   clearAlerts: () => {},
+  tradeFeedMeta: null,
 };
 
-async function fetchJson<T>(path: string): Promise<T> {
-  const res = await fetch(path);
-  if (!res.ok) throw new Error(`Fetch failed: ${res.status}`);
-  return res.json();
+async function safeFetchJson<T>(path: string, empty: T): Promise<T> {
+  try {
+    const res = await fetch(path);
+    if (!res.ok) return empty;
+    return (await res.json()) as T;
+  } catch {
+    return empty;
+  }
+}
+
+/** Same base path as `apiPrefix()` in MarketChart: matches `next.config.mjs` basePath / NEXT_PUBLIC_BASE_PATH. */
+function clientApiBaseFromWindow(): string {
+  if (typeof window === "undefined") return "";
+  const path = (process.env.NEXT_PUBLIC_BASE_PATH ?? "").replace(/\/$/, "");
+  return `${window.location.origin}${path}`;
 }
 
 export function PulseProvider({ children }: { children: React.ReactNode }) {
@@ -85,6 +110,7 @@ export function PulseProvider({ children }: { children: React.ReactNode }) {
   const [learn, setLearn] = useState<LearnModule[]>([]);
   const [research, setResearch] = useState<ResearchItem[]>([]);
   const [myco, setMyco] = useState<MycoSnapshot | null>(null);
+  const [upcomingCatalysts, setUpcomingCatalysts] = useState<UpcomingCatalyst[]>([]);
   const [loading, setLoading] = useState(true);
   const [panelIntervalSec, setPanelIntervalSecState] = useState(12);
   const [tickerPageIntervalSec, setTickerPageIntervalSecState] = useState(8);
@@ -95,6 +121,8 @@ export function PulseProvider({ children }: { children: React.ReactNode }) {
   ]);
   const [newsSources, setNewsSources] = useState<string[]>(["Market Brief", "Biotech Daily", "Financial Times", "DAO Weekly", "Crypto Pulse"]);
   const [alerts, setAlerts] = useState<Alert[]>([]);
+  const [tradeFeedMeta, setTradeFeedMeta] = useState<TradeFeedMeta | null>(null);
+  const enrichedRef = useRef<NewsWithIntelligence[]>([]);
 
   const setPanelIntervalSec = useCallback((v: number) => setPanelIntervalSecState(Math.max(5, v)), []);
   const setTickerPageIntervalSec = useCallback((v: number) => setTickerPageIntervalSecState(Math.max(5, v)), []);
@@ -103,22 +131,20 @@ export function PulseProvider({ children }: { children: React.ReactNode }) {
   }, []);
   const clearAlerts = useCallback(() => setAlerts([]), []);
 
+  const clientApiBase = clientApiBaseFromWindow();
+
   const refresh = useCallback(async () => {
     setLoading(true);
     try {
-      const base =
-        typeof window !== "undefined"
-          ? process.env.NODE_ENV === "production"
-            ? window.location.origin + "/mycodao.financial"
-            : window.location.origin
-          : "";
-      const [t, n, p, l, r, m] = await Promise.all([
-        fetchJson<Ticker[]>(`${base}/api/tickers`),
-        fetchJson<NewsItem[]>(`${base}/api/news`),
-        fetchJson<PodcastEpisode[]>(`${base}/api/podcasts`),
-        fetchJson<LearnModule[]>(`${base}/api/learn`),
-        fetchJson<ResearchItem[]>(`${base}/api/research`),
-        fetchJson<MycoSnapshot>(`${base}/api/myco`),
+      const base = clientApiBase;
+      const [t, n, p, l, r, m, cal] = await Promise.all([
+        safeFetchJson<Ticker[]>(`${base}/api/tickers`, []),
+        safeFetchJson<NewsItem[]>(`${base}/api/news`, []),
+        safeFetchJson<PodcastEpisode[]>(`${base}/api/podcasts`, []),
+        safeFetchJson<LearnModule[]>(`${base}/api/learn`, []),
+        safeFetchJson<ResearchItem[]>(`${base}/api/research`, []),
+        safeFetchJson<MycoSnapshot | null>(`${base}/api/myco`, null),
+        safeFetchJson<UpcomingCatalyst[]>(`${base}/api/calendar`, []),
       ]);
       setTickers(t);
       setNews(n);
@@ -126,6 +152,7 @@ export function PulseProvider({ children }: { children: React.ReactNode }) {
       setLearn(l);
       setResearch(r);
       setMyco(m);
+      setUpcomingCatalysts(cal);
       const enriched = enrichNewsWithIntelligence(classifyNews(n));
       const newAlerts = evaluateAlerts(t, enriched);
       setAlerts((prev) => {
@@ -140,7 +167,7 @@ export function PulseProvider({ children }: { children: React.ReactNode }) {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [clientApiBase]);
 
   useEffect(() => {
     refresh();
@@ -150,15 +177,68 @@ export function PulseProvider({ children }: { children: React.ReactNode }) {
     () => enrichNewsWithIntelligence(classifyNews(news)),
     [news]
   );
+
+  useEffect(() => {
+    enrichedRef.current = enrichedNews;
+  }, [enrichedNews]);
+
+  useEffect(() => {
+    const sseOn =
+      typeof window !== "undefined" &&
+      (process.env.NEXT_PUBLIC_PULSE_SSE === "1" || process.env.NEXT_PUBLIC_PULSE_SSE === "true");
+    if (!sseOn || !clientApiBase) return;
+
+    const url = `${clientApiBase}/api/pulse/stream`;
+    const es = new EventSource(url);
+
+    es.onmessage = (ev) => {
+      try {
+        const payload = JSON.parse(ev.data as string) as {
+          type?: string;
+          tickers?: Ticker[];
+          meta?: { serverProcessMs?: number; cacheHit?: boolean; ts?: number };
+        };
+        if (payload.type === "tickers" && Array.isArray(payload.tickers)) {
+          setTickers(payload.tickers);
+          setTradeFeedMeta({
+            serverProcessMs: payload.meta?.serverProcessMs,
+            cacheHit: payload.meta?.cacheHit,
+            ts: payload.meta?.ts,
+            sseConnected: true,
+          });
+          const newAlerts = evaluateAlerts(payload.tickers, enrichedRef.current);
+          setAlerts((prev) => {
+            const key = (a: Alert) => `${a.type}-${a.symbol ?? ""}-${a.message.slice(0, 30)}`;
+            const seen = new Set(prev.map(key));
+            const added = newAlerts.filter((a) => !seen.has(key(a)));
+            return [...added, ...prev].slice(0, 50);
+          });
+        }
+      } catch {
+        /* ignore malformed */
+      }
+    };
+
+    es.onerror = () => {
+      setTradeFeedMeta((m) => ({ ...m, sseConnected: false, ts: Date.now() }));
+    };
+
+    return () => {
+      es.close();
+    };
+  }, [clientApiBase]);
+
   const whyMovingMap = useMemo(
     () => buildWhyMovingMap(tickers, enrichedNews, 12),
     [tickers, enrichedNews]
   );
 
-  const { moverInsights, headlineInsights, researchMetricsInsight, governanceInsight } = useMemo(
-    () => generateAllInsights({ tickers, news, myco }),
-    [tickers, news, myco]
-  );
+  const {
+    movers: moverInsights,
+    headlines: headlineInsights,
+    researchMetrics: researchMetricsInsight,
+    governance: governanceInsight,
+  } = useMemo(() => generateAllInsights({ tickers, news, myco }), [tickers, news, myco]);
 
   const unifiedEvents = useMemo(
     () =>
@@ -168,8 +248,9 @@ export function PulseProvider({ children }: { children: React.ReactNode }) {
         enrichedNews,
         myco,
         research,
+        upcomingCatalysts,
       }),
-    [tickers, news, enrichedNews, myco, research]
+    [tickers, news, enrichedNews, myco, research, upcomingCatalysts]
   );
 
   const value: PulseContextValue = {
@@ -186,6 +267,7 @@ export function PulseProvider({ children }: { children: React.ReactNode }) {
     learn,
     research,
     myco,
+    upcomingCatalysts,
     loading,
     refresh,
     panelIntervalSec,
@@ -199,6 +281,7 @@ export function PulseProvider({ children }: { children: React.ReactNode }) {
     alerts,
     dismissAlert,
     clearAlerts,
+    tradeFeedMeta,
   };
 
   return <PulseContext.Provider value={value}>{children}</PulseContext.Provider>;

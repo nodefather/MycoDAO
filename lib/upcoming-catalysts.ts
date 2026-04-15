@@ -14,7 +14,8 @@ export type UpcomingCatalyst = {
   catalystType?: string;
 };
 
-const MOCK_UPCOMING: UpcomingCatalyst[] = [
+/** Used only when `ALLOW_MOCK_FALLBACK=true` or legacy sync callers. Prefer `/api/calendar` + PulseProvider. */
+export const FALLBACK_UPCOMING_CATALYSTS: UpcomingCatalyst[] = [
   { date: "Feb 18", label: "CPI Release", time: "8:30 ET", importance: "high", relatedSymbols: ["SPY", "DXY", "GOLD"], catalystType: "macro" },
   { date: "Feb 20", label: "FOMC Minutes", time: "2:00 ET", importance: "high", relatedSymbols: ["SPY", "DXY"], catalystType: "macro" },
   { date: "Feb 21", label: "NVDA Earnings", time: "4:00 ET", importance: "high", relatedSymbols: ["NVDA"], catalystType: "earnings" },
@@ -25,6 +26,7 @@ const MOCK_UPCOMING: UpcomingCatalyst[] = [
   { date: "Mar 5", label: "MYCO proposal vote", time: "12:00 UTC", importance: "high", relatedSymbols: ["MYCO"], catalystType: "proposal" },
 ];
 
+/** @deprecated Prefer `upcomingCatalysts` from PulseProvider (live `/api/calendar`). */
 export function getUpcomingCatalysts(): UpcomingCatalyst[] {
-  return [...MOCK_UPCOMING];
+  return [...FALLBACK_UPCOMING_CATALYSTS];
 }

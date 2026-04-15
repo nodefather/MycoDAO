@@ -45,7 +45,7 @@ function getWidthsForModule(
       out.add(SIZE_WIDTH[key]);
     }
   }
-  return [...out].sort((a, b) => b - a);
+  return Array.from(out).sort((a, b) => b - a);
 }
 
 /**

@@ -34,9 +34,9 @@ export default function MarketHeatmapModule() {
             style={{ backgroundColor: heatColor(t.changePct) }}
             title={`${t.symbol} ${t.changePct >= 0 ? "+" : ""}${t.changePct.toFixed(2)}%`}
           >
-            <span className="font-mono text-[9px] text-stone-200 truncate max-w-full">{t.symbol}</span>
+            <span className="font-mono text-xs text-stone-200 truncate max-w-full">{t.symbol}</span>
             <span
-              className={`font-mono text-[8px] tabular-nums ${t.changePct >= 0 ? "text-emerald-400" : "text-red-400"}`}
+              className={`font-mono text-xs tabular-nums ${t.changePct >= 0 ? "text-emerald-400" : "text-red-400"}`}
             >
               {t.changePct >= 0 ? "+" : ""}
               {t.changePct.toFixed(1)}%
@@ -45,7 +45,7 @@ export default function MarketHeatmapModule() {
         ))}
       </div>
       {grid.length === 0 && (
-        <p className="text-[10px] text-stone-500 p-[2px]">No movement data</p>
+        <p className="text-xs text-stone-500 p-[2px]">No movement data</p>
       )}
     </PulseModule>
   );

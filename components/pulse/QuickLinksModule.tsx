@@ -15,7 +15,7 @@ export default function QuickLinksModule() {
   return (
     <div className="flex flex-wrap gap-x-0.5 gap-y-0 leading-tight">
       {LINKS.map(({ href, label }) => (
-        <Link key={href} href={href} className="text-[10px] text-stone-500 hover:text-stone-300">
+        <Link key={href} href={href} className="text-xs text-stone-500 hover:text-stone-300">
           {label}
         </Link>
       ))}

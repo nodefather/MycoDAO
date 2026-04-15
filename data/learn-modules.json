@@ -1,0 +1,38 @@
+[
+  {
+    "id": "1",
+    "title": "What is a Ticker?",
+    "level": "beginner",
+    "readingTimeMin": 3,
+    "summary": "Learn how to read price symbols and understand market data.",
+    "tags": ["basics", "markets"],
+    "contentMd": "# What is a Ticker?\n\nA ticker symbol is a unique identifier for a traded asset."
+  },
+  {
+    "id": "2",
+    "title": "Governance Tokens Explained",
+    "level": "intermediate",
+    "readingTimeMin": 5,
+    "summary": "How governance tokens fund DAOs and community initiatives.",
+    "tags": ["governance", "crypto"],
+    "contentMd": "# Governance Tokens\n\nGovernance tokens enable voting and funding allocation."
+  },
+  {
+    "id": "3",
+    "title": "Biobank Incentives and Data",
+    "level": "advanced",
+    "readingTimeMin": 7,
+    "summary": "Token-based incentives for biobank storage and research data.",
+    "tags": ["biobank", "data"],
+    "contentMd": "# Biobank Incentives\n\nCommunity-driven data incentives support research."
+  },
+  {
+    "id": "4",
+    "title": "Reading Sparklines",
+    "level": "beginner",
+    "readingTimeMin": 2,
+    "summary": "How to interpret mini-charts in market data.",
+    "tags": ["basics", "charts"],
+    "contentMd": "# Sparklines\n\nSparklines show price trends at a glance."
+  }
+]

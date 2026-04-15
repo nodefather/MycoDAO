@@ -6,7 +6,7 @@
 import type { Ticker, NewsItem, MycoSnapshot, ResearchItem } from "@/lib/types";
 import type { NewsWithIntelligence } from "@/lib/news-intelligence";
 import { freshnessScore, urgencyFromMove, impactFromImportance } from "@/lib/intelligence/scoring";
-import { getUpcomingCatalysts } from "@/lib/upcoming-catalysts";
+import { getUpcomingCatalysts, type UpcomingCatalyst } from "@/lib/upcoming-catalysts";
 import type {
   UnifiedEvent,
   MarketEvent,
@@ -22,6 +22,8 @@ export type EventInputs = {
   enrichedNews?: NewsWithIntelligence[];
   myco: MycoSnapshot | null;
   research: ResearchItem[];
+  /** When set (including `[]`), replaces legacy mock catalysts. */
+  upcomingCatalysts?: UpcomingCatalyst[];
 };
 
 function importanceToImpact(importance: "high" | "medium" | "low"): number {
@@ -101,9 +103,9 @@ export function normalizeCatalystAndMediaEvents(
 }
 
 /** Upcoming catalysts (calendar) as CatalystEvents. */
-export function normalizeUpcomingCatalystEvents(): CatalystEvent[] {
-  const list = getUpcomingCatalysts();
-  return list.map((c, i) => ({
+export function normalizeUpcomingCatalystEvents(list?: UpcomingCatalyst[]): CatalystEvent[] {
+  const resolved = list !== undefined ? list : getUpcomingCatalysts();
+  return resolved.map((c, i) => ({
     type: "catalyst" as const,
     id: `upcoming-${i}-${c.label.slice(0, 20)}`,
     title: c.label,
@@ -165,7 +167,7 @@ export function normalizeAllEvents(inputs: EventInputs): UnifiedEvent[] {
     inputs.news,
     inputs.enrichedNews
   );
-  const upcoming = normalizeUpcomingCatalystEvents();
+  const upcoming = normalizeUpcomingCatalystEvents(inputs.upcomingCatalysts);
   const governance = normalizeGovernanceEvents(inputs.myco);
   const research = normalizeResearchEvents(inputs.research);
 

@@ -1,8 +1,17 @@
 /** @type {import('next').NextConfig} */
+const rawBase = process.env.NEXT_PUBLIC_BASE_PATH?.trim() ?? "";
+const basePath =
+  rawBase && rawBase !== "/"
+    ? rawBase.startsWith("/")
+      ? rawBase
+      : `/${rawBase}`
+    : "";
+
 const nextConfig = {
   reactStrictMode: true,
-  // Use basePath only in production so local dev works at http://localhost:3004/
-  basePath: process.env.NODE_ENV === "production" ? "/mycodao.financial" : "",
+  /** Empty for `https://pulse.mycodao.com/` at root. Set NEXT_PUBLIC_BASE_PATH only if serving under a subpath. */
+  basePath,
+  output: "standalone",
 };
 
 export default nextConfig;

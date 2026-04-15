@@ -32,8 +32,8 @@ export default function PulseLayout({ children }: { children: React.ReactNode })
       <DashboardModeProvider>
         {/* Fixed viewport so bottom ticker is always visible; no page scroll */}
         <div className="fixed inset-0 w-full h-full overflow-hidden border border-black bg-black box-border border-t-[6px] border-x-[6px] border-b-[12px]">
-          <div className="h-full flex flex-col overflow-hidden bg-stone-950 text-stone-200">
-            <div className="flex-1 min-h-0 overflow-hidden flex flex-col">
+          <div className="pulse-dashboard-zoom h-full flex flex-col overflow-hidden bg-stone-950 text-stone-200">
+            <div className="flex-1 min-h-0 min-w-0 overflow-y-auto overflow-x-hidden flex flex-col">
               {children}
             </div>
             <div className="shrink-0 flex flex-col">

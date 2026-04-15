@@ -36,16 +36,16 @@ export default function BigMoversRow({ ticker, whyMoving }: BigMoversRowProps) {
       data-symbol={ticker.symbol}
     >
       <div className="flex items-center gap-0.5 min-w-0">
-        <span className="font-mono text-[10px] font-semibold text-stone-300 truncate">{ticker.symbol}</span>
+        <span className="font-mono text-xs font-semibold text-stone-300 truncate">{ticker.symbol}</span>
         <span className="text-[7px] px-0.5 py-px rounded bg-stone-800/80 text-stone-500 uppercase shrink-0">{assetBadge(ticker.assetClass, ticker.symbol)}</span>
-        {isMyco && <Link href="/token" className="text-[8px] hover:opacity-80 shrink-0" style={{ color: "var(--accent-gold)" }} title="MYCO token">→</Link>}
+        {isMyco && <Link href="/token" className="text-xs hover:opacity-80 shrink-0" style={{ color: "var(--accent-gold)" }} title="MYCO token">→</Link>}
       </div>
-      <span className="font-mono text-[10px] text-stone-100 text-right">{formatPrice(ticker.price, ticker.symbol)}</span>
-      <span className={`font-mono text-[10px] text-right ${up ? "text-emerald-500" : "text-red-500"}`}>{up ? "▲" : "▼"} {up ? "+" : ""}{ticker.changePct.toFixed(2)}%</span>
-      <span className={`font-mono text-[9px] text-right ${sessionUp ? "text-emerald-500/80" : "text-red-500/80"}`} title="1h">{sessionUp ? "+" : ""}{(ticker.sessionChangePct ?? 0).toFixed(1)}%</span>
+      <span className="font-mono text-xs text-stone-100 text-right">{formatPrice(ticker.price, ticker.symbol)}</span>
+      <span className={`font-mono text-xs text-right ${up ? "text-emerald-500" : "text-red-500"}`}>{up ? "▲" : "▼"} {up ? "+" : ""}{ticker.changePct.toFixed(2)}%</span>
+      <span className={`font-mono text-xs text-right ${sessionUp ? "text-emerald-500/80" : "text-red-500/80"}`} title="1h">{sessionUp ? "+" : ""}{(ticker.sessionChangePct ?? 0).toFixed(1)}%</span>
       <div className="flex justify-end">{ticker.sparkline?.length > 0 && <Sparkline data={ticker.sparkline} width={48} height={12} positive={up} />}</div>
       {whyMoving && (
-        <p className="col-span-full text-[8px] text-stone-500 truncate -mt-px" title={whyMoving}>
+        <p className="col-span-full text-xs text-stone-500 truncate -mt-px" title={whyMoving}>
           {whyMoving}
         </p>
       )}

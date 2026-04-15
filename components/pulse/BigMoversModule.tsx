@@ -66,7 +66,7 @@ export default function BigMoversModule({ tickers }: BigMoversModuleProps) {
               key={f.id}
               type="button"
               onClick={() => setFilter(f.id)}
-              className={`px-[2px] py-[2px] rounded text-[10px] font-medium transition-colors ${
+              className={`px-[2px] py-[2px] rounded text-xs font-medium transition-colors ${
                 filter === f.id ? "bg-stone-700/60" : "text-stone-500 hover:text-stone-300"
               }`}
             style={filter === f.id ? { color: "var(--accent-gold)" } : undefined}
@@ -80,7 +80,7 @@ export default function BigMoversModule({ tickers }: BigMoversModuleProps) {
             <button
               type="button"
               onClick={() => setSubTab("gainers")}
-              className={`px-[2px] py-[2px] rounded text-[10px] font-medium transition-colors ${
+              className={`px-[2px] py-[2px] rounded text-xs font-medium transition-colors ${
                 subTab === "gainers" ? "bg-stone-700/60" : "text-stone-500 hover:text-stone-300"
               }`}
             style={subTab === "gainers" ? { color: "var(--accent-green)" } : undefined}
@@ -90,7 +90,7 @@ export default function BigMoversModule({ tickers }: BigMoversModuleProps) {
             <button
               type="button"
               onClick={() => setSubTab("losers")}
-              className={`px-[2px] py-[2px] rounded text-[10px] font-medium transition-colors ${
+              className={`px-[2px] py-[2px] rounded text-xs font-medium transition-colors ${
                 subTab === "losers" ? "bg-red-900/40 text-red-400" : "text-stone-500 hover:text-stone-300"
               }`}
             >
@@ -98,7 +98,7 @@ export default function BigMoversModule({ tickers }: BigMoversModuleProps) {
             </button>
           </div>
           {lastUpdated && (
-            <span className="font-mono text-[8px] text-stone-500" title="Last updated">
+            <span className="font-mono text-xs text-stone-500" title="Last updated">
               {formatLastUpdated(lastUpdated)}
             </span>
           )}

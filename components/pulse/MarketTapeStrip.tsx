@@ -22,7 +22,7 @@ export default function MarketTapeStrip({ tickers, className = "" }: MarketTapeS
 
   return (
     <div
-      className={`flex items-center gap-3 overflow-hidden border-b border-stone-700 bg-stone-900/80 h-[20px] px-[2px] text-[10px] leading-tight tabular-nums shrink-0 ${className}`}
+      className={`flex items-center gap-3 overflow-hidden border-b border-stone-700 bg-stone-900/80 h-[20px] px-[2px] text-xs leading-tight tabular-nums shrink-0 ${className}`}
       aria-label="Market tape"
     >
       <span className="shrink-0 font-bold uppercase text-stone-500">Tape</span>

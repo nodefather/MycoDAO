@@ -18,10 +18,10 @@ export default function ResearchRow({ item }: ResearchRowProps) {
   return (
     <div className="py-[1px] border-b border-neutral-800 last:border-0 leading-tight tabular-nums">
       <div className="flex items-center gap-1">
-        <span className="text-[10px] text-stone-500 shrink-0 uppercase">{item.category}</span>
-        <span className="font-mono text-[10px] text-stone-500 shrink-0">{formatDate(item.publishedAt)}</span>
+        <span className="text-xs text-stone-500 shrink-0 uppercase">{item.category}</span>
+        <span className="font-mono text-xs text-stone-500 shrink-0">{formatDate(item.publishedAt)}</span>
       </div>
-      <p className="text-[10px] text-stone-200 line-clamp-2">{item.title}</p>
+      <p className="text-xs text-stone-200 line-clamp-2">{item.title}</p>
     </div>
   );
 }

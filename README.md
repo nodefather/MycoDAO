@@ -4,6 +4,8 @@ Next.js project. Dev server runs on port 3004.
 
 **Mycosoft:** Canonical remote is [MycosoftLabs/MYCODAO](https://github.com/MycosoftLabs/MYCODAO). Dashboard code merged from [nodefather/MycoDAO](https://github.com/nodefather/MycoDAO) (fork of Abelardo’s repo). Hosting migration, Webflow/Figma, and NatureApp/backend integration notes: `docs/MYCODAO_HOSTING_MIGRATION_AND_NATUREAPP_PREP_APR14_2026.md`.
 
+**Dashboard test + real backends (isolated from mycosoft.com :3010):** `docs/MYCODAO_DASHBOARD_TEST_AND_BACKEND_INTEGRATION_PLAN_APR15_2026.md`.
+
 ## Setup
 
 ```bash
@@ -11,7 +13,7 @@ npm install
 npm run dev
 ```
 
-Open [http://localhost:3004/mycodao.financial](http://localhost:3004/mycodao.financial). Pulse: [http://localhost:3004/mycodao.financial/pulse](http://localhost:3004/mycodao.financial/pulse).
+Production hostname: **pulse.mycodao.com** (see `docs/PULSE_MYCODAO_COM_DEPLOY_AND_TEST_APR14_2026.md`). Local: [http://localhost:3004/](http://localhost:3004/) — Pulse dashboard: [http://localhost:3004/pulse](http://localhost:3004/pulse).
 
 ## Scripts
 
@@ -19,6 +21,8 @@ Open [http://localhost:3004/mycodao.financial](http://localhost:3004/mycodao.fin
 - `npm run build` — Production build
 - `npm run start` — Start production server (port 3004)
 - `npm run lint` — Run ESLint
+- `npm run test:pulse-smoke` — API smoke (needs `npm run dev` or `npm run start`)
+- `npm run test:pulse-smoke:prod` — Smoke against `https://pulse.mycodao.com` when live
 
 ## Structure
 
