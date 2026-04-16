@@ -8,6 +8,7 @@ import { useDashboardMode } from "@/lib/dashboard-mode-context";
 const TABS = [
   { href: "/pulse", label: "Pulse" },
   { href: "/pulse/markets", label: "Markets" },
+  { href: "/pulse/trade", label: "Trade" },
   { href: "/pulse/news", label: "News" },
   { href: "/pulse/podcasts", label: "Podcasts" },
   { href: "/pulse/learn", label: "Learn" },

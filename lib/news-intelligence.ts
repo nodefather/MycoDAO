@@ -21,6 +21,27 @@ export type WhyMoving = {
   headlineIds: string[];
 };
 
+/** Coerce API/JSON news rows so `.tags` / strings never throw in classify/enrich. */
+export function normalizeNewsItem(raw: NewsItem): NewsItem {
+  return {
+    ...raw,
+    id: typeof raw.id === "string" ? raw.id : `news-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
+    source: typeof raw.source === "string" ? raw.source : "Unknown",
+    title: typeof raw.title === "string" ? raw.title : "",
+    summary: typeof raw.summary === "string" ? raw.summary : "",
+    url: typeof raw.url === "string" ? raw.url : "",
+    tags: Array.isArray(raw.tags) ? raw.tags.filter((t): t is string => typeof t === "string") : [],
+    publishedAt: typeof raw.publishedAt === "string" ? raw.publishedAt : new Date().toISOString(),
+    category:
+      raw.category === "mycodao" || raw.category === "crypto" || raw.category === "markets"
+        ? raw.category
+        : "markets",
+    relatedAssets: Array.isArray(raw.relatedAssets)
+      ? raw.relatedAssets.filter((x): x is string => typeof x === "string")
+      : undefined,
+  };
+}
+
 const MOVER_TAGS = ["nvda", "gold", "sol", "solana", "myco", "earnings", "rates", "dxy", "fed", "macro", "ai ", "analyst"];
 const CATALYST_TAGS = ["earnings", "cpi", "fomc", "rates", "release", "conference", "upcoming"];
 const ECOSYSTEM_TAGS = ["mycodao", "myco", "governance", "proposal", "grant", "partnership", "funding", "biobank", "dao"];
@@ -101,7 +122,8 @@ function importanceForItem(item: NewsWithClass): CatalystImportance {
  * Classify news into: Now Moving Markets, Upcoming Catalysts, Ecosystem/MycoDAO.
  */
 export function classifyNews(items: NewsItem[]): NewsWithClass[] {
-  return items.map((item) => {
+  return items.map((raw) => {
+    const item = normalizeNewsItem(raw);
     const titleLower = item.title.toLowerCase();
     const summaryLower = item.summary.toLowerCase();
     const tagsLower = item.tags.map((t) => t.toLowerCase());

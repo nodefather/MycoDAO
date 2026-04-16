@@ -7,7 +7,23 @@ type MycoEcosystemCompactProps = {
   snapshot: MycoSnapshot | null;
 };
 
+function supplyLine(snapshot: MycoSnapshot | null): string {
+  if (!snapshot) return "Supply: —";
+  const c = snapshot.canonical;
+  if (c?.totalSupplyLabel) return `Supply: ${c.totalSupplyLabel}`;
+  if (snapshot.supply > 0) {
+    const n = snapshot.supply;
+    if (n >= 1_000_000) return `Supply: ${(n / 1_000_000).toFixed(n % 1_000_000 === 0 ? 0 : 2)}M`;
+    return `Supply: ${n.toLocaleString()}`;
+  }
+  return "Supply: —";
+}
+
 export default function MycoEcosystemCompact({ snapshot }: MycoEcosystemCompactProps) {
+  const dist = snapshot?.canonical?.distribution;
+  const row1 = dist?.[0];
+  const row2 = dist?.[1];
+
   return (
     <div className="space-y-0">
       {snapshot && (
@@ -19,10 +35,10 @@ export default function MycoEcosystemCompact({ snapshot }: MycoEcosystemCompactP
         </div>
       )}
       <div className="grid grid-cols-2 gap-x-2 gap-y-0 text-xs text-stone-500">
-        <span>Supply: 210M</span>
-        <span>Chain: Solana</span>
-        <span>Community: 30%</span>
-        <span>Biobank: 22%</span>
+        <span>{supplyLine(snapshot)}</span>
+        <span>Chain: {snapshot?.chain ?? "—"}</span>
+        <span>{row1 ? `${row1.title}: ${row1.pct}%` : "Allocation: —"}</span>
+        <span>{row2 ? `${row2.title}: ${row2.pct}%` : "—"}</span>
       </div>
       <Link href="/token" className="block text-xs hover:opacity-80 transition-opacity shrink-0" style={{ color: "var(--accent-gold)" }}>
         Token details →

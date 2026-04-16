@@ -1,12 +1,10 @@
 /**
- * Learn modules: LEARN_MODULES_URL JSON, local `data/learn-modules.json`, or mock when ALLOW_MOCK_FALLBACK.
+ * Learn modules: LEARN_MODULES_URL JSON or local `data/learn-modules.json` (real curriculum files only).
  */
 
 import { readFile } from "fs/promises";
 import path from "path";
 import type { LearnModule } from "@/lib/types";
-import { allowMockFallback } from "@/lib/server/pulse-env";
-import { getMockLearn } from "@/lib/mock-data";
 
 function isLearnArray(x: unknown): x is LearnModule[] {
   return Array.isArray(x) && x.every((m) => m && typeof (m as LearnModule).id === "string");
@@ -35,6 +33,5 @@ export async function fetchLearnModules(): Promise<LearnModule[]> {
     /* missing file */
   }
 
-  if (allowMockFallback()) return getMockLearn();
   return [];
 }

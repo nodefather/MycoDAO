@@ -4,9 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev -p 3004",
+    "dev:fresh": "npm run clean && next dev -p 3004",
     "build": "next build",
     "start": "next start -p 3004",
-    "clean": "rimraf .next",
+    "clean": "rimraf .next node_modules/.cache",
     "clean:build": "npm run clean && npm run build",
     "lint": "next lint",
     "check:backends": "node scripts/check-pulse-backends.mjs",

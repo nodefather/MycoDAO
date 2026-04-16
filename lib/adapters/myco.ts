@@ -1,31 +1,29 @@
 /**
- * MYCO snapshot: optional MYCO_SNAPSHOT_URL JSON, DexScreener (Solana mint), or mock when ALLOW_MOCK_FALLBACK.
+ * MYCO snapshot: optional MYCO_SNAPSHOT_URL JSON, DexScreener (when MYCO_SOLANA_MINT is set),
+ * then enrichment (canonical JSON, treasury, pools, RPC). Mock MYCO data is never used.
  */
 
 import type { MycoSnapshot } from "@/lib/types";
-import { getMockMycoSnapshot } from "@/lib/mock-data";
-import { allowMockFallback } from "@/lib/server/pulse-env";
+import { enrichMycoSnapshot } from "@/lib/adapters/myco-enrichment";
 
+/**
+ * Ensure biobank/governance objects exist for UI shape only.
+ * Does not invent metrics from researchFunding (no synthetic DAO/biobank numbers).
+ */
 function ensurePhase3Fields(snapshot: MycoSnapshot): MycoSnapshot {
-  const rf = snapshot.researchFunding;
-  if (!rf) return snapshot;
-  return {
-    ...snapshot,
-    biobank:
-      snapshot.biobank ??
-      ({
-        samplesIndexed: rf.samplesIndexed,
-        labsParticipating: 0,
-        dataContributions: Math.floor(rf.samplesIndexed * 0.05),
-      } as MycoSnapshot["biobank"]),
-    governance:
-      snapshot.governance ??
-      ({
-        activeProposals: rf.activeProposals,
-        votingProgressPct: Math.min(100, rf.votesToday > 0 ? 60 + Math.floor(rf.votesToday / 10) : 50),
-        grantApprovals: Math.floor((rf.grantsDeployedMyco / (rf.grantPoolMyco || 1)) * 10),
-      } as MycoSnapshot["governance"]),
-  };
+  const biobank: MycoSnapshot["biobank"] =
+    snapshot.biobank ?? {
+      samplesIndexed: 0,
+      labsParticipating: 0,
+      dataContributions: 0,
+    };
+  const governance: MycoSnapshot["governance"] =
+    snapshot.governance ?? {
+      activeProposals: 0,
+      votingProgressPct: 0,
+      grantApprovals: 0,
+    };
+  return { ...snapshot, biobank, governance };
 }
 
 function emptySnapshot(): MycoSnapshot {
@@ -36,7 +34,7 @@ function emptySnapshot(): MycoSnapshot {
     supply: 0,
     chain: "Solana",
     links: {
-      tokenPage: process.env.NEXT_PUBLIC_MYCO_TOKEN_PAGE || "/token",
+      tokenPage: process.env.NEXT_PUBLIC_MYCO_TOKEN_PAGE || "https://www.mycodao.com/token",
       governanceUrl: process.env.NEXT_PUBLIC_MYCO_GOV_URL,
       buyUrl: process.env.NEXT_PUBLIC_MYCO_BUY_URL,
     },
@@ -75,11 +73,10 @@ export async function fetchMycoSnapshot(): Promise<MycoSnapshot> {
   if (snapshotUrl) {
     const res = await fetch(snapshotUrl, { cache: "no-store", signal: AbortSignal.timeout(12_000) });
     if (!res.ok) {
-      if (allowMockFallback()) return ensurePhase3Fields(getMockMycoSnapshot());
-      return emptySnapshot();
+      return ensurePhase3Fields(await enrichMycoSnapshot(emptySnapshot()));
     }
     const raw = (await res.json()) as MycoSnapshot;
-    return ensurePhase3Fields(raw);
+    return ensurePhase3Fields(await enrichMycoSnapshot(raw));
   }
 
   const mint = process.env.MYCO_SOLANA_MINT?.trim();
@@ -88,40 +85,26 @@ export async function fetchMycoSnapshot(): Promise<MycoSnapshot> {
       const dex = await fetchDexScreenerToken(mint);
       if (dex) {
         const now = new Date().toISOString();
+        const base = emptySnapshot();
         const links: MycoSnapshot["links"] = {
-          tokenPage: process.env.NEXT_PUBLIC_MYCO_TOKEN_PAGE || "/token",
-          governanceUrl: process.env.NEXT_PUBLIC_MYCO_GOV_URL,
-          buyUrl: process.env.NEXT_PUBLIC_MYCO_BUY_URL,
+          ...base.links,
+          tokenPage: process.env.NEXT_PUBLIC_MYCO_TOKEN_PAGE || base.links.tokenPage,
+          governanceUrl: process.env.NEXT_PUBLIC_MYCO_GOV_URL ?? base.links.governanceUrl,
+          buyUrl: process.env.NEXT_PUBLIC_MYCO_BUY_URL ?? base.links.buyUrl,
         };
-        if (allowMockFallback()) {
-          const base = getMockMycoSnapshot();
-          const merged: MycoSnapshot = {
-            ...base,
-            price: dex.priceUsd,
-            changePct: dex.change24h,
-            updatedAt: now,
-            links: { ...base.links, ...links },
-          };
-          return ensurePhase3Fields(merged);
-        }
-        return ensurePhase3Fields({
+        const merged: MycoSnapshot = {
+          ...base,
           price: dex.priceUsd,
           changePct: dex.change24h,
-          supply: 0,
-          chain: "Solana",
-          links,
           updatedAt: now,
-        });
+          links,
+        };
+        return ensurePhase3Fields(await enrichMycoSnapshot(merged));
       }
     } catch {
       /* fall through */
     }
   }
 
-  if (allowMockFallback()) {
-    const snapshot = getMockMycoSnapshot();
-    return ensurePhase3Fields(snapshot);
-  }
-
-  return emptySnapshot();
+  return ensurePhase3Fields(await enrichMycoSnapshot(emptySnapshot()));
 }

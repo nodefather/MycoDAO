@@ -43,7 +43,7 @@ export function evaluateAlerts(
     }
     if (
       n.importance === "high" &&
-      n.catalystTags.some((tag) => /cpi|fomc|fed|macro/i.test(tag)) &&
+      (n.catalystTags ?? []).some((tag) => /cpi|fomc|fed|macro/i.test(tag)) &&
       !seen.has("macro_event")
     ) {
       seen.add("macro_event");

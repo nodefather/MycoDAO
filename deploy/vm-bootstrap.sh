@@ -29,11 +29,17 @@ git fetch origin && git reset --hard origin/main
 
 if [[ ! -f .env.production ]]; then
   cp .env.example .env.production
-  echo "Created .env.production from .env.example — edit FINNHUB_API_KEY, MAS_API_URL, MINDEX_API_URL, then re-run:"
-  echo "  docker compose --profile tls up -d --build"
+  echo "Created .env.production from .env.example — edit FINNHUB_API_KEY, CLOUDFLARE_TUNNEL_TOKEN (tunnel), MAS/MINDEX URLs, then re-run:"
+  echo "  MYCODAO_COMPOSE_PROFILE=tunnel ./deploy/vm-bootstrap.sh   # or tls for Caddy on 443"
   exit 0
 fi
 
-docker compose --profile tls up -d --build
-
-echo "OK: MycoDAO containers starting. Check: docker compose ps && docker compose logs -f"
+PROFILE="${MYCODAO_COMPOSE_PROFILE:-tls}"
+if [[ "${PROFILE}" == "tunnel" ]]; then
+  docker compose up -d --build
+  docker compose --profile tunnel up -d --build
+  echo "OK: app + Cloudflare tunnel. Set CLOUDFLARE_TUNNEL_TOKEN in .env.production. Logs: docker compose logs -f cloudflared"
+else
+  docker compose --profile tls up -d --build
+  echo "OK: app + Caddy TLS. Check: docker compose ps && docker compose logs -f"
+fi

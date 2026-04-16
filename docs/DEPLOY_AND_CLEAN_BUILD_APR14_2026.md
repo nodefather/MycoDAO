@@ -14,6 +14,14 @@ npm run dev
 
 Or one step: `npm run clean:build` then `npm run dev`.
 
+For day-to-day dev after pulls or weird HMR state, prefer:
+
+```bash
+npm run dev:fresh
+```
+
+(`dev:fresh` runs `clean` then `next dev` — see `package.json`.)
+
 Do not commit `.next/`. On the VM, always run a **fresh build** after `git pull`.
 
 ## Production build

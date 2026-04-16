@@ -29,7 +29,7 @@ export function generateHeadlineInsights(news: NewsItem[]): HeadlineInsight[] {
     const scores: InsightScores = {
       urgency: 0.5,
       freshness: freshnessScore(item.publishedAt),
-      relevance: item.relatedSymbols.length > 0 ? 0.8 : 0.5,
+      relevance: (item.relatedSymbols ?? []).length > 0 ? 0.8 : 0.5,
       impact: impactFromImportance(importance),
     };
     return {

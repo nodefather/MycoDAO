@@ -2,10 +2,6 @@
  * Server-only env helpers for Pulse API routes and adapters.
  */
 
-export function allowMockFallback(): boolean {
-  return process.env.ALLOW_MOCK_FALLBACK === "true" || process.env.ALLOW_MOCK_FALLBACK === "1";
-}
-
 export function masApiBase(): string {
   return (process.env.MAS_API_URL || "").replace(/\/$/, "");
 }

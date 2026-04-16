@@ -6,7 +6,7 @@
 import type { Ticker, NewsItem, MycoSnapshot, ResearchItem } from "@/lib/types";
 import type { NewsWithIntelligence } from "@/lib/news-intelligence";
 import { freshnessScore, urgencyFromMove, impactFromImportance } from "@/lib/intelligence/scoring";
-import { getUpcomingCatalysts, type UpcomingCatalyst } from "@/lib/upcoming-catalysts";
+import type { UpcomingCatalyst } from "@/lib/upcoming-catalysts";
 import type {
   UnifiedEvent,
   MarketEvent,
@@ -22,7 +22,7 @@ export type EventInputs = {
   enrichedNews?: NewsWithIntelligence[];
   myco: MycoSnapshot | null;
   research: ResearchItem[];
-  /** When set (including `[]`), replaces legacy mock catalysts. */
+  /** When set (including `[]`), drives upcoming catalyst events from `/api/calendar`. */
   upcomingCatalysts?: UpcomingCatalyst[];
 };
 
@@ -104,7 +104,7 @@ export function normalizeCatalystAndMediaEvents(
 
 /** Upcoming catalysts (calendar) as CatalystEvents. */
 export function normalizeUpcomingCatalystEvents(list?: UpcomingCatalyst[]): CatalystEvent[] {
-  const resolved = list !== undefined ? list : getUpcomingCatalysts();
+  const resolved = list ?? [];
   return resolved.map((c, i) => ({
     type: "catalyst" as const,
     id: `upcoming-${i}-${c.label.slice(0, 20)}`,

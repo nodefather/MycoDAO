@@ -45,14 +45,22 @@ function MarketsContent() {
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-6">
-      <header className="flex items-center justify-between mb-6">
+      <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
         <div>
           <h1 className="text-xl font-bold text-stone-100">Markets</h1>
           <p className="text-xs text-stone-500">Tickers and watchlist</p>
         </div>
-        <Link href="/pulse" className="text-xs text-stone-500 hover:text-stone-300">
-          ← Pulse
-        </Link>
+        <div className="flex flex-wrap items-center gap-2">
+          <Link
+            href="/pulse/trade"
+            className="text-xs px-3 py-2 rounded border border-stone-600 text-stone-200 hover:bg-stone-800 min-h-[44px] inline-flex items-center"
+          >
+            Trading terminal
+          </Link>
+          <Link href="/pulse" className="text-xs text-stone-500 hover:text-stone-300 min-h-[44px] inline-flex items-center">
+            ← Pulse
+          </Link>
+        </div>
       </header>
 
       <div className="flex flex-wrap gap-2 mb-4">

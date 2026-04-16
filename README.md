@@ -18,11 +18,21 @@ Production hostname: **pulse.mycodao.com** — deploy: `docs/PULSE_MYCODAO_COM_D
 ## Scripts
 
 - `npm run dev` — Start dev server (port 3004)
+- `npm run dev:fresh` — Delete `.next` (and `node_modules/.cache`) then dev — use after branch switches or **`Cannot find module './NNN.js'`** chunk errors
 - `npm run build` — Production build
 - `npm run start` — Start production server (port 3004)
+- `npm run clean` — Remove `.next` and webpack cache
+- `npm run clean:build` — Clean + production build
 - `npm run lint` — Run ESLint
+- `npm run check:backends` — Ping MAS/MINDEX/NatureOS health URLs from `.env.local`
 - `npm run test:pulse-smoke` — API smoke (needs `npm run dev` or `npm run start`)
 - `npm run test:pulse-smoke:prod` — Smoke against `https://pulse.mycodao.com` when live
+
+**Full checklist of env/backends/trading gaps:** `docs/PULSE_FULL_FUNCTIONALITY_GAPS_APR14_2026.md`.
+
+**Production VM + Cloudflare Tunnel:** `docs/PULSE_VM_CLOUDFLARE_TUNNEL_DEPLOY_APR14_2026.md` — deploy from Windows: `.\scripts\deploy-pulse-vm.ps1` (LAN; loads VM password like other Mycosoft deploy scripts).
+
+**Health:** `GET /api/health` — optional `?deep=1` to probe MAS/MINDEX when URLs are set in `.env.production`.
 
 ## Structure
 

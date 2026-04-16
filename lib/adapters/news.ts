@@ -1,10 +1,8 @@
 /**
- * News: GNews or NewsAPI when keys are set; empty array or mock per ALLOW_MOCK_FALLBACK.
+ * News: GNews or NewsAPI when keys are set; otherwise empty (no synthetic articles).
  */
 
 import type { NewsItem } from "@/lib/types";
-import { getMockNews } from "@/lib/mock-data";
-import { allowMockFallback } from "@/lib/server/pulse-env";
 
 const CACHE_TTL_MS = 5 * 60_000;
 let cached: NewsItem[] | null = null;
@@ -17,12 +15,6 @@ export async function fetchNews(): Promise<NewsItem[]> {
   const newsapi = process.env.NEWS_API_KEY?.trim();
 
   if (!gnews && !newsapi) {
-    if (allowMockFallback()) {
-      const mock = getMockNews();
-      cached = mock;
-      cachedAt = Date.now();
-      return mock;
-    }
     cached = null;
     return [];
   }
@@ -33,30 +25,37 @@ export async function fetchNews(): Promise<NewsItem[]> {
       : `https://newsapi.org/v2/top-headlines?country=us&apiKey=${newsapi}&pageSize=15`;
     const res = await fetch(url, { cache: "no-store", signal: AbortSignal.timeout(12_000) });
     if (!res.ok) {
-      if (allowMockFallback()) return getMockNews();
       cached = null;
       return [];
     }
     const json = await res.json();
     const articles = json.articles || json.results || [];
-    const mapped: NewsItem[] = (articles.slice(0, 12) as Array<{
+    const raw = articles.slice(0, 20) as Array<{
       title?: string;
       description?: string;
       url?: string;
       source?: { name?: string };
       publishedAt?: string;
-    }>).map((a, i) => ({
-      id: `ext-${i}`,
-      source: a.source?.name || "News",
-      title: a.title || "",
-      summary: a.description || "",
-      url: a.url || "#",
-      tags: [],
-      publishedAt: a.publishedAt || new Date().toISOString(),
-      category: "markets" as const,
-    }));
+    }>;
+    const mapped: NewsItem[] = [];
+    let i = 0;
+    for (const a of raw) {
+      const url = (a.url || "").trim();
+      if (!/^https?:\/\//i.test(url)) continue;
+      mapped.push({
+        id: `ext-${i++}`,
+        source: a.source?.name || "News",
+        title: a.title || "",
+        summary: a.description || "",
+        url,
+        tags: [],
+        publishedAt: a.publishedAt || new Date().toISOString(),
+        category: "markets" as const,
+      });
+      if (mapped.length >= 12) break;
+    }
     if (mapped.length === 0) {
-      if (allowMockFallback()) return getMockNews();
+      cached = null;
       return [];
     }
     cached = mapped;
@@ -64,7 +63,6 @@ export async function fetchNews(): Promise<NewsItem[]> {
     return mapped;
   } catch {
     cached = null;
-    if (allowMockFallback()) return getMockNews();
     return [];
   }
 }

@@ -1,10 +1,8 @@
 /**
- * Upcoming macro/DAO catalysts: Finnhub economic calendar, optional JSON URL, or mock when ALLOW_MOCK_FALLBACK.
+ * Upcoming macro/DAO catalysts: Finnhub economic calendar or optional JSON URL.
  */
 
 import type { UpcomingCatalyst } from "@/lib/upcoming-catalysts";
-import { FALLBACK_UPCOMING_CATALYSTS } from "@/lib/upcoming-catalysts";
-import { allowMockFallback } from "@/lib/server/pulse-env";
 
 function mapImpact(impact?: string): UpcomingCatalyst["importance"] {
   if (impact === "high") return "high";
@@ -75,6 +73,5 @@ export async function fetchUpcomingCatalysts(): Promise<UpcomingCatalyst[]> {
     }
   }
 
-  if (allowMockFallback()) return [...FALLBACK_UPCOMING_CATALYSTS];
   return [];
 }

@@ -3,8 +3,7 @@
  */
 
 import type { ResearchItem } from "@/lib/types";
-import { allowMockFallback, mindexApiBase, mindexInternalHeaders } from "@/lib/server/pulse-env";
-import { getMockResearch } from "@/lib/mock-data";
+import { mindexApiBase, mindexInternalHeaders } from "@/lib/server/pulse-env";
 
 const OPENALEX_BASE = "https://api.openalex.org";
 const OPENALEX_HEADERS = {
@@ -46,7 +45,17 @@ async function fetchFromMindex(search: string, limit: number): Promise<ResearchI
   const url = `${base}/api/mindex/research?search=${encodeURIComponent(search)}&limit=${limit}`;
   const res = await fetch(url, { headers, cache: "no-store", signal: AbortSignal.timeout(12_000) });
   if (!res.ok) return null;
-  const data = (await res.json()) as { papers?: Array<{ id: string; title: string; abstract?: string; publication_date?: string; journal?: string; url?: string; open_access_url?: string }> };
+  const data = (await res.json()) as {
+    papers?: Array<{
+      id: string;
+      title: string;
+      abstract?: string;
+      publication_date?: string;
+      journal?: string;
+      url?: string;
+      open_access_url?: string;
+    }>;
+  };
   const papers = data.papers || [];
   return papers.map((p, i) =>
     mapPaperToResearchItem(
@@ -109,6 +118,5 @@ export async function fetchResearchItems(): Promise<ResearchItem[]> {
     /* fall through */
   }
 
-  if (allowMockFallback()) return getMockResearch();
   return [];
 }

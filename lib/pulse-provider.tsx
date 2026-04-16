@@ -86,14 +86,31 @@ const DEFAULT_PULSE_VALUE: PulseContextValue = {
   tradeFeedMeta: null,
 };
 
+/** Client-side cap so one slow Next route (e.g. hung RSS) cannot block Pulse forever. */
+const PULSE_FETCH_TIMEOUT_MS = 8000;
+
+async function fetchWithTimeout(url: string, timeoutMs: number): Promise<Response> {
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    return await fetch(url, { signal: controller.signal });
+  } finally {
+    clearTimeout(id);
+  }
+}
+
 async function safeFetchJson<T>(path: string, empty: T): Promise<T> {
   try {
-    const res = await fetch(path);
+    const res = await fetchWithTimeout(path, PULSE_FETCH_TIMEOUT_MS);
     if (!res.ok) return empty;
     return (await res.json()) as T;
   } catch {
     return empty;
   }
+}
+
+function asArray<T>(v: unknown): T[] {
+  return Array.isArray(v) ? (v as T[]) : [];
 }
 
 /** Same base path as `apiPrefix()` in MarketChart: matches `next.config.mjs` basePath / NEXT_PUBLIC_BASE_PATH. */
@@ -137,7 +154,7 @@ export function PulseProvider({ children }: { children: React.ReactNode }) {
     setLoading(true);
     try {
       const base = clientApiBase;
-      const [t, n, p, l, r, m, cal] = await Promise.all([
+      const settled = await Promise.allSettled([
         safeFetchJson<Ticker[]>(`${base}/api/tickers`, []),
         safeFetchJson<NewsItem[]>(`${base}/api/news`, []),
         safeFetchJson<PodcastEpisode[]>(`${base}/api/podcasts`, []),
@@ -146,6 +163,18 @@ export function PulseProvider({ children }: { children: React.ReactNode }) {
         safeFetchJson<MycoSnapshot | null>(`${base}/api/myco`, null),
         safeFetchJson<UpcomingCatalyst[]>(`${base}/api/calendar`, []),
       ]);
+      const val = <T,>(i: number, empty: T): T => {
+        const r = settled[i];
+        return r?.status === "fulfilled" ? (r.value as T) : empty;
+      };
+      const t = asArray<Ticker>(val(0, []));
+      const n = asArray<NewsItem>(val(1, []));
+      const p = asArray<PodcastEpisode>(val(2, []));
+      const l = asArray<LearnModule>(val(3, []));
+      const r = asArray<ResearchItem>(val(4, []));
+      const mRaw = val<unknown>(5, null);
+      const m = mRaw !== null && typeof mRaw === "object" && !Array.isArray(mRaw) ? (mRaw as MycoSnapshot) : null;
+      const cal = asArray<UpcomingCatalyst>(val(6, []));
       setTickers(t);
       setNews(n);
       setPodcasts(p);

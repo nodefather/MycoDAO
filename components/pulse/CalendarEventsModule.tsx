@@ -23,8 +23,8 @@ export default function CalendarEventsModule() {
     <PulseModule title="Calendar / Events">
       {events.length === 0 ? (
         <div className="text-xs text-stone-500 leading-tight">
-          No upcoming events. Set <span className="font-mono">FINNHUB_API_KEY</span>,{" "}
-          <span className="font-mono">CALENDAR_JSON_URL</span>, or <span className="font-mono">ALLOW_MOCK_FALLBACK=true</span>.
+          No upcoming events. Set <span className="font-mono">FINNHUB_API_KEY</span> or{" "}
+          <span className="font-mono">CALENDAR_JSON_URL</span> for a live economic calendar.
         </div>
       ) : (
         events.map((e, i) => (
