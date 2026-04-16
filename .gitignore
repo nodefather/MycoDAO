@@ -26,3 +26,6 @@ yarn-error.log*
 
 # Pulse podcast chat persistence (VM / single instance)
 /data/
+
+# Proxmox-injected deploy key (never commit)
+.ssh-pulse-deploy/

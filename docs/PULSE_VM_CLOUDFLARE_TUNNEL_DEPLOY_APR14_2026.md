@@ -13,6 +13,10 @@
 - **Tunnel + hostname** are managed in **Zero Trust → Networks → Tunnels** (not standard Zone DNS API alone). The MCP **`zones_list`** tool can confirm the **`mycodao.com`** zone exists; tunnel DNS records often appear as automatic CNAMEs to `*.cfargotunnel.com`.
 - **Do not** change apex/`www` records for Webflow.
 
+## SSH when the guest is public-key only (Proxmox bootstrap)
+
+If password auth is disabled and no key is on your PC, use **Proxmox + `virt-customize`** to inject a deploy key, then use **OpenSSH** + `.\scripts\deploy-pulse-vm.ps1` (auto-detects `.ssh-pulse-deploy/id_ed25519`). Full steps: **`docs/PULSE_SSH_BOOTSTRAP_VIA_PROXMOX_APR16_2026.md`**.
+
 ## SSH to the VM (password vs public key)
 
 If the guest only allows **public-key** auth (common on hardened images), **password-based `plink -pw` will fail** with `No supported authentication methods available (server sent: publickey)`.

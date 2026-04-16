@@ -30,7 +30,7 @@ Production hostname: **pulse.mycodao.com** — deploy: `docs/PULSE_MYCODAO_COM_D
 
 **Full checklist of env/backends/trading gaps:** `docs/PULSE_FULL_FUNCTIONALITY_GAPS_APR14_2026.md`.
 
-**Production VM + Cloudflare Tunnel:** `docs/PULSE_VM_CLOUDFLARE_TUNNEL_DEPLOY_APR14_2026.md` — deploy from Windows: `.\scripts\deploy-pulse-vm.ps1` (LAN; loads VM password like other Mycosoft deploy scripts).
+**Production VM + Cloudflare Tunnel:** `docs/PULSE_VM_CLOUDFLARE_TUNNEL_DEPLOY_APR14_2026.md` — deploy from Windows: `.\scripts\deploy-pulse-vm.ps1` (uses **OpenSSH** + `.ssh-pulse-deploy/id_ed25519` when present, else PuTTY password/`.ppk`). If the guest is **public-key only**, bootstrap once via Proxmox: `docs/PULSE_SSH_BOOTSTRAP_VIA_PROXMOX_APR16_2026.md`.
 
 **Health:** `GET /api/health` — optional `?deep=1` to probe MAS/MINDEX when URLs are set in `.env.production`.
 

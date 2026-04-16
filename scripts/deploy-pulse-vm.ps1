@@ -3,24 +3,24 @@
   Deploy MycoDAO Pulse to the Proxmox guest (default 192.168.0.198).
 
   Auth (pick one):
-  - PuTTY .ppk: -PrivateKeyPpk or $env:VM_SSH_PRIVATE_KEY_PPK (recommended if VM is pubkey-only)
+  - OpenSSH private key: -PrivateKeyOpenSSH, $env:VM_SSH_PRIVATE_KEY_OPENSSH, or repo .ssh-pulse-deploy/id_ed25519
+  - PuTTY .ppk: -PrivateKeyPpk or $env:VM_SSH_PRIVATE_KEY_PPK
   - Password: $env:VM_PASSWORD / VM_SSH_PASSWORD or MAS repo .credentials.local
 
   Usage (from repo root):
     .\scripts\deploy-pulse-vm.ps1
-    .\scripts\deploy-pulse-vm.ps1 -PrivateKeyPpk "$env:USERPROFILE\.ssh\mycodao_vm.ppk"
+    .\scripts\deploy-pulse-vm.ps1 -PrivateKeyOpenSSH "$PWD\.ssh-pulse-deploy\id_ed25519"
 
-  Requires: PuTTY plink.exe on PATH, LAN access to the VM, git + Docker on the VM.
-  Set CLOUDFLARE_TUNNEL_TOKEN in /opt/mycodao/.env.production on the VM for tunnel profile.
+  Requires: OpenSSH client (ssh) or PuTTY plink; LAN to VM; git + Docker on the VM.
+  Set CLOUDFLARE_TUNNEL_TOKEN in /opt/mycodao/.env.production for tunnel profile.
 #>
 param(
   [string] $VmHost = "192.168.0.198",
   [string] $VmUser = "mycosoft",
   [string] $RemoteDir = "/opt/mycodao",
   [string] $Branch = "main",
-  # PuTTY .ppk path; overrides password when set and file exists
+  [string] $PrivateKeyOpenSSH = "",
   [string] $PrivateKeyPpk = "",
-  # PuTTY plink -hostkey (required in -batch when key not in registry). Update if VM is reinstalled.
   [string] $HostKey = "ssh-ed25519 255 SHA256:bi3g/9ByDiGgwnHV9lrYdBOBVvB5yRv9i+/WbItR67s"
 )
 
@@ -43,17 +43,23 @@ function Get-VmPassword {
   return $null
 }
 
+$openKey = $PrivateKeyOpenSSH
+if (-not $openKey) { $openKey = $env:VM_SSH_PRIVATE_KEY_OPENSSH }
+if (-not $openKey) {
+  $def = Join-Path $PSScriptRoot "..\.ssh-pulse-deploy\id_ed25519"
+  if (Test-Path $def) { $openKey = (Resolve-Path $def).Path }
+}
+
 $ppk = $PrivateKeyPpk
 if (-not $ppk) { $ppk = $env:VM_SSH_PRIVATE_KEY_PPK }
 if ($ppk -and -not (Test-Path $ppk)) {
   throw "Private key file not found: $ppk"
 }
+if ($openKey -and -not (Test-Path $openKey)) {
+  throw "OpenSSH key not found: $openKey"
+}
 
 $pass = Get-VmPassword
-$plink = Get-Command plink -ErrorAction SilentlyContinue
-if (-not $plink) {
-  throw "plink.exe not found. Install PuTTY or add plink to PATH."
-}
 
 $bash = @"
 set -e
@@ -67,8 +73,23 @@ docker compose up -d
 docker compose --profile tunnel up -d
 docker compose ps
 "@
+# OpenSSH on Windows passes CRLF to remote bash — normalize to LF
+$bash = $bash -replace "`r`n", "`n"
 
 Write-Host "Deploying to ${VmUser}@${VmHost}:${RemoteDir} (branch $Branch)..."
+
+if ($openKey) {
+  Write-Host "Using OpenSSH key: $openKey"
+  $sshTarget = "${VmUser}@${VmHost}"
+  & ssh.exe -o BatchMode=yes -o StrictHostKeyChecking=accept-new -i $openKey $sshTarget $bash
+  exit $LASTEXITCODE
+}
+
+$plink = Get-Command plink -ErrorAction SilentlyContinue
+if (-not $plink) {
+  throw "No OpenSSH key and plink.exe not found. Install PuTTY or use -PrivateKeyOpenSSH / .ssh-pulse-deploy/id_ed25519"
+}
+
 $plinkArgs = @("-batch", "-ssh", "${VmUser}@${VmHost}")
 if ($HostKey) { $plinkArgs = @("-hostkey", $HostKey) + $plinkArgs }
 if ($ppk) {
@@ -76,7 +97,7 @@ if ($ppk) {
   Write-Host "Using PuTTY key: $ppk"
 } else {
   if (-not $pass) {
-    throw "No VM password and no -PrivateKeyPpk / VM_SSH_PRIVATE_KEY_PPK. MycoDAO VM may require SSH public key: create a .ppk, add pubkey to mycosoft@$VmHost :~/.ssh/authorized_keys, then re-run with -PrivateKeyPpk."
+    throw "No VM password and no OpenSSH/PuTTY key. See docs/PULSE_VM_CLOUDFLARE_TUNNEL_DEPLOY_APR14_2026.md"
   }
   $plinkArgs = $plinkArgs + @("-pw", $pass)
 }
