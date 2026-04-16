@@ -13,9 +13,28 @@
 - **Tunnel + hostname** are managed in **Zero Trust → Networks → Tunnels** (not standard Zone DNS API alone). The MCP **`zones_list`** tool can confirm the **`mycodao.com`** zone exists; tunnel DNS records often appear as automatic CNAMEs to `*.cfargotunnel.com`.
 - **Do not** change apex/`www` records for Webflow.
 
+## SSH to the VM (password vs public key)
+
+If the guest only allows **public-key** auth (common on hardened images), **password-based `plink -pw` will fail** with `No supported authentication methods available (server sent: publickey)`.
+
+1. Generate or reuse an SSH key; for PuTTY use **`.ppk`** (PuTTYgen can convert OpenSSH `id_ed25519` → `.ppk`).
+2. Append the **OpenSSH public key** line to **`/home/mycosoft/.ssh/authorized_keys`** on the VM (via Proxmox console, another admin machine, or a one-time password session).
+3. Deploy from Windows:
+
+```powershell
+$env:VM_SSH_PRIVATE_KEY_PPK = "$env:USERPROFILE\.ssh\mycodao_198.ppk"
+.\scripts\deploy-pulse-vm.ps1
+# or: .\scripts\deploy-pulse-vm.ps1 -PrivateKeyPpk "C:\path\to\key.ppk"
+```
+
+**First connect:** `plink` needs the host key; the script pins **`-hostkey`** for **192.168.0.198**. If the VM is reinstalled, update **`$HostKey`** in `scripts/deploy-pulse-vm.ps1` from the fingerprint `plink` prints.
+
 ## One-command deploy (Windows, LAN)
 
-From repo root (loads VM password from MAS `.credentials.local` or `VM_PASSWORD`):
+From repo root:
+
+- **Password:** loads from MAS `.credentials.local` or `VM_PASSWORD` / `VM_SSH_PASSWORD`.
+- **Pubkey:** set `VM_SSH_PRIVATE_KEY_PPK` or pass **`-PrivateKeyPpk`**.
 
 ```powershell
 .\scripts\deploy-pulse-vm.ps1

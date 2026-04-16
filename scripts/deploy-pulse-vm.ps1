@@ -1,11 +1,14 @@
 #Requires -Version 5.1
 <#
   Deploy MycoDAO Pulse to the Proxmox guest (default 192.168.0.198).
-  Loads VM password from $env:VM_PASSWORD or MAS repo .credentials.local (VM_SSH_PASSWORD / VM_PASSWORD).
+
+  Auth (pick one):
+  - PuTTY .ppk: -PrivateKeyPpk or $env:VM_SSH_PRIVATE_KEY_PPK (recommended if VM is pubkey-only)
+  - Password: $env:VM_PASSWORD / VM_SSH_PASSWORD or MAS repo .credentials.local
 
   Usage (from repo root):
     .\scripts\deploy-pulse-vm.ps1
-    .\scripts\deploy-pulse-vm.ps1 -VmHost "192.168.0.198" -RemoteDir "/opt/mycodao"
+    .\scripts\deploy-pulse-vm.ps1 -PrivateKeyPpk "$env:USERPROFILE\.ssh\mycodao_vm.ppk"
 
   Requires: PuTTY plink.exe on PATH, LAN access to the VM, git + Docker on the VM.
   Set CLOUDFLARE_TUNNEL_TOKEN in /opt/mycodao/.env.production on the VM for tunnel profile.
@@ -14,7 +17,11 @@ param(
   [string] $VmHost = "192.168.0.198",
   [string] $VmUser = "mycosoft",
   [string] $RemoteDir = "/opt/mycodao",
-  [string] $Branch = "main"
+  [string] $Branch = "main",
+  # PuTTY .ppk path; overrides password when set and file exists
+  [string] $PrivateKeyPpk = "",
+  # PuTTY plink -hostkey (required in -batch when key not in registry). Update if VM is reinstalled.
+  [string] $HostKey = "ssh-ed25519 255 SHA256:bi3g/9ByDiGgwnHV9lrYdBOBVvB5yRv9i+/WbItR67s"
 )
 
 $ErrorActionPreference = "Stop"
@@ -33,7 +40,13 @@ function Get-VmPassword {
       if ($_ -match '^\s*VM_(?:SSH_)?PASSWORD\s*=\s*(.+)\s*$') { return $matches[1].Trim() }
     }
   }
-  throw "No VM password: set VM_PASSWORD or add VM_PASSWORD to .credentials.local"
+  return $null
+}
+
+$ppk = $PrivateKeyPpk
+if (-not $ppk) { $ppk = $env:VM_SSH_PRIVATE_KEY_PPK }
+if ($ppk -and -not (Test-Path $ppk)) {
+  throw "Private key file not found: $ppk"
 }
 
 $pass = Get-VmPassword
@@ -56,6 +69,17 @@ docker compose ps
 "@
 
 Write-Host "Deploying to ${VmUser}@${VmHost}:${RemoteDir} (branch $Branch)..."
-# plink: accept host key on first connect; run remote bash
-echo y | & plink.exe -batch -ssh "${VmUser}@${VmHost}" -pw $pass $bash
+$plinkArgs = @("-batch", "-ssh", "${VmUser}@${VmHost}")
+if ($HostKey) { $plinkArgs = @("-hostkey", $HostKey) + $plinkArgs }
+if ($ppk) {
+  $plinkArgs = @("-i", $ppk) + $plinkArgs
+  Write-Host "Using PuTTY key: $ppk"
+} else {
+  if (-not $pass) {
+    throw "No VM password and no -PrivateKeyPpk / VM_SSH_PRIVATE_KEY_PPK. MycoDAO VM may require SSH public key: create a .ppk, add pubkey to mycosoft@$VmHost :~/.ssh/authorized_keys, then re-run with -PrivateKeyPpk."
+  }
+  $plinkArgs = $plinkArgs + @("-pw", $pass)
+}
+
+& plink.exe @plinkArgs $bash
 Write-Host "Done. Test: https://pulse.mycodao.com/api/health and npm run test:pulse-smoke:prod"
