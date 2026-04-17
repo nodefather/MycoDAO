@@ -41,6 +41,8 @@ services:
     profiles:
       - tls
 
+  # Requires CLOUDFLARE_TUNNEL_TOKEN at compose parse time: use
+  # `docker compose --env-file .env.production --profile tunnel up -d`
   cloudflared:
     image: cloudflare/cloudflared:latest
     container_name: mycodao-cloudflared

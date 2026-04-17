@@ -16,6 +16,18 @@ Edge HTTPS is terminated at Cloudflare. The tunnel is encrypted; the origin can 
 
 Visiting `https://pulse.mycodao.com/` **redirects to `/pulse`** (see root `middleware.js`).
 
+## API automation (optional)
+
+From the **Mycosoft MAS** repo, `scripts/_cloudflare_mycodao_pulse_tunnel.py` can create/update tunnel **`mycodao-pulse`**, set ingress **`pulse.mycodao.com` → `http://mycodao:3004`**, and create/update the **CNAME** `pulse` → `<tunnel-id>.cfargotunnel.com`.
+
+**Requires:** `CLOUDFLARE_API_TOKEN` with **Account / Cloudflare Tunnel / Edit** (required for tunnel API; DNS-only tokens get HTTP 403) **and** **Zone / DNS / Edit** for `mycodao.com`. **The zone `mycodao.com` must exist on that account.** Account id is read from the zone if omitted. Optional: `CLOUDFLARE_ZONE_ID_MYCODAO`.
+
+**Workspace note:** If your main `CLOUDFLARE_API_TOKEN` is restricted to **mycosoft.com** / **mycosoft.org** only, add **`CLOUDFLARE_API_TOKEN_MYCODAO=...`** to `MAS/mycosoft-mas/.credentials.local` with a token whose **Zone / Resources** includes **mycodao.com** (or **All zones**) plus **Account / Cloudflare Tunnel / Edit**. The script `scripts/_cloudflare_mycodao_pulse_tunnel.py` prefers `CLOUDFLARE_API_TOKEN_MYCODAO` when set.
+
+If you **edit** an existing token’s permissions in the dashboard, you must often **create a new token** and **paste the new secret** into the file — the old secret string does not gain new permissions.
+
+The Cursor **Cloudflare MCP** in this workspace is oriented to **Workers** routes and secrets; **zone DNS and Zero Trust tunnels** are handled via the **Cloudflare REST API** (as in the script above).
+
 ## One-time: create the tunnel (Cloudflare Zero Trust)
 
 1. Log in to [Cloudflare One](https://one.dash.cloudflare.com/) → **Networks** → **Tunnels** → **Create a tunnel**.
@@ -70,6 +82,23 @@ Use a **temporary** Cloudflare try hostname or a **separate** dev tunnel in Zero
 ```bash
 npm run test:pulse-smoke:prod
 ```
+
+## Troubleshooting: nothing loads at https://pulse.mycodao.com
+
+Two things must both be true:
+
+1. **DNS** — `pulse.mycodao.com` must resolve publicly (not NXDOMAIN). In the **mycodao.com** zone on Cloudflare, add the hostname from the tunnel (often a **CNAME** to `*.cfargotunnel.com` created automatically when you save the public hostname in Zero Trust). Confirm with `nslookup pulse.mycodao.com 8.8.8.8`.
+
+2. **Tunnel running with a token** — On the VM, `/opt/mycodao/.env.production` must set **`CLOUDFLARE_TUNNEL_TOKEN=<token>`** (from Zero Trust → your tunnel → **Configure**). Then:
+
+   ```bash
+   cd /opt/mycodao && docker compose --profile tunnel up -d
+   docker compose logs cloudflared --tail 50
+   ```
+
+   If the token is missing or wrong, `cloudflared` exits with errors like *requires the ID or name of the tunnel* or *token* issues — the edge never connects, so the hostname shows nothing or an error.
+
+The Pulse app on the VM (`http://127.0.0.1:3004` or `http://192.168.0.198:3004`) can be healthy while the **public** URL still fails until DNS + tunnel are fixed.
 
 ## Related
 

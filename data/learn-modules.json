@@ -1,38 +1,246 @@
 [
   {
-    "id": "1",
-    "title": "What is a Ticker?",
+    "id": "markets-ticker-basics",
+    "title": "What is a ticker symbol?",
     "level": "beginner",
+    "track": "markets-basics",
+    "readingTimeMin": 4,
+    "summary": "How exchanges identify equities, crypto, and commodities — and how to read symbol conventions.",
+    "tags": [
+      "markets",
+      "symbols"
+    ],
+    "resourceLinks": [
+      {
+        "label": "Investor.gov — how markets work",
+        "href": "https://www.investor.gov/introduction-investing/investing-basics/how-stock-markets-work"
+      },
+      {
+        "label": "ISO 10383 — MIC codes",
+        "href": "https://www.iso20022.org/market-identifier-codes"
+      }
+    ],
+    "contentMd": "# What is a ticker symbol?\n\nA **ticker** (or **symbol**) is a short code that identifies a tradable instrument on a venue. Equities often use one to five letters; crypto pairs append a quote asset (e.g., BTC-USD).\n\n## Why it matters\n\n- Routing orders to the correct instrument\n- Cross-venue price comparison\n- Regulatory reporting and audit trails\n\nAlways confirm **chain**, **venue**, and **asset class** before trading."
+  },
+  {
+    "id": "markets-sparklines",
+    "title": "Reading sparklines and intraday context",
+    "level": "beginner",
+    "track": "markets-basics",
     "readingTimeMin": 3,
-    "summary": "Learn how to read price symbols and understand market data.",
-    "tags": ["basics", "markets"],
-    "contentMd": "# What is a Ticker?\n\nA ticker symbol is a unique identifier for a traded asset."
+    "summary": "Micro-charts show recent price path; they are not a forecast by themselves.",
+    "tags": [
+      "charts",
+      "ui"
+    ],
+    "resourceLinks": [
+      {
+        "label": "Candlestick basics (CFI)",
+        "href": "https://corporatefinanceinstitute.com/resources/career-map/sell-side/capital-markets/technical-analysis/"
+      }
+    ],
+    "contentMd": "# Sparklines\n\n**Sparklines** compress recent trades or mid prices into a tiny line.\n\n- Upticks and downticks are **historical**, not predictive.\n- Compare against **volume** and **news** for context.\n- For volatile names, use longer windows to avoid noise."
   },
   {
-    "id": "2",
-    "title": "Governance Tokens Explained",
+    "id": "governance-tokens-101",
+    "title": "Governance tokens and DAO treasuries",
     "level": "intermediate",
-    "readingTimeMin": 5,
-    "summary": "How governance tokens fund DAOs and community initiatives.",
-    "tags": ["governance", "crypto"],
-    "contentMd": "# Governance Tokens\n\nGovernance tokens enable voting and funding allocation."
+    "track": "governance",
+    "readingTimeMin": 6,
+    "summary": "How on-chain voting, delegation, and treasury workflows relate to community-funded science and operations.",
+    "tags": [
+      "dao",
+      "voting"
+    ],
+    "resourceLinks": [
+      {
+        "label": "Ethereum.org — DAOs",
+        "href": "https://ethereum.org/en/dao/"
+      },
+      {
+        "label": "Solana Realms documentation",
+        "href": "https://docs.realms.today/"
+      }
+    ],
+    "contentMd": "# Governance tokens\n\nGovernance tokens represent **votes** over protocol parameters, grants, or treasury moves. Typical patterns:\n\n1. **Proposal → discussion → vote → timelock → execution**\n2. **Delegation** to trusted representatives\n3. **Treasury diversification** constraints\n\nScientific DAOs often pair governance with **milestone-based grants**."
   },
   {
-    "id": "3",
-    "title": "Biobank Incentives and Data",
-    "level": "advanced",
-    "readingTimeMin": 7,
-    "summary": "Token-based incentives for biobank storage and research data.",
-    "tags": ["biobank", "data"],
-    "contentMd": "# Biobank Incentives\n\nCommunity-driven data incentives support research."
-  },
-  {
-    "id": "4",
-    "title": "Reading Sparklines",
+    "id": "fungi-ecology-biomaterials",
+    "title": "Fungal ecology and biomaterials primer",
     "level": "beginner",
-    "readingTimeMin": 2,
-    "summary": "How to interpret mini-charts in market data.",
-    "tags": ["basics", "charts"],
-    "contentMd": "# Sparklines\n\nSparklines show price trends at a glance."
+    "track": "fungi-mycology",
+    "readingTimeMin": 7,
+    "summary": "Mycelium as networks, decomposition, and industrial uses — vocabulary for biology-meets-market readers.",
+    "tags": [
+      "mycology",
+      "biology"
+    ],
+    "resourceLinks": [
+      {
+        "label": "Britannica — fungus",
+        "href": "https://www.britannica.com/science/fungus"
+      },
+      {
+        "label": "USDA — fungal plant pathogens",
+        "href": "https://www.nal.usda.gov/exhibits/ipm/fungi"
+      }
+    ],
+    "contentMd": "# Fungi and biomaterials\n\n**Mycelium** is the vegetative body of many fungi; it explores substrates and exchanges nutrients. **Fruiting bodies** (mushrooms) reproduce via spores.\n\nIndustrial interest includes **composite materials**, **packaging**, and **enzymes**. Markets reference biology when supply chains hinge on fermentation yield or strain IP."
+  },
+  {
+    "id": "mycelium-desci-data",
+    "title": "Mycelium metaphors for open research data",
+    "level": "intermediate",
+    "track": "fungi-mycology",
+    "readingTimeMin": 5,
+    "summary": "Fair data sharing, attribution, and incentives — without implying financial advice.",
+    "tags": [
+      "desci",
+      "data"
+    ],
+    "resourceLinks": [
+      {
+        "label": "NIH — data sharing",
+        "href": "https://sharing.nih.gov/"
+      }
+    ],
+    "contentMd": "# Networks and datasets\n\nOpen labs publish **datasets** with licenses and citation requirements. Analogies to fungal networks emphasize **routing value** back to contributors.\n\nVerify **license**, **consent**, and **PII** constraints before reuse in products."
+  },
+  {
+    "id": "bio-ip-licensing",
+    "title": "Biotech IP basics: patents vs trade secrets vs open licensing",
+    "level": "intermediate",
+    "track": "bio-ip",
+    "readingTimeMin": 8,
+    "summary": "High-level framing for founders and investors; consult counsel for filings.",
+    "tags": [
+      "ip",
+      "legal"
+    ],
+    "resourceLinks": [
+      {
+        "label": "USPTO — patents overview",
+        "href": "https://www.uspto.gov/patents/basics"
+      },
+      {
+        "label": "Creative Commons licenses",
+        "href": "https://creativecommons.org/share-your-work/licensing-terms/"
+      }
+    ],
+    "contentMd": "# IP in biotech\n\n- **Patents**: time-limited exclusivity tied to claims; costly to defend.\n- **Trade secrets**: protection via confidentiality; weaker if leaked.\n- **Open licenses**: permissive reuse with attribution (not a substitute for regulated disclosures).\n\nTokenized communities still need **real-world contracts** between parties."
+  },
+  {
+    "id": "nfts-science-metadata",
+    "title": "NFTs as attestations — metadata and authenticity",
+    "level": "beginner",
+    "track": "nfts-ordinals",
+    "readingTimeMin": 6,
+    "summary": "What tokens can and cannot prove about specimens, assays, or datasets.",
+    "tags": [
+      "nft",
+      "metadata"
+    ],
+    "resourceLinks": [
+      {
+        "label": "Ethereum.org — NFTs",
+        "href": "https://ethereum.org/en/nft/"
+      }
+    ],
+    "contentMd": "# NFTs and provenance\n\nAn **NFT** is typically a pointer to metadata on or off chain. Authenticity depends on **issuer reputation**, **signature workflows**, and **storage durability**.\n\nSeparate **marketing claims** from **regulated disclosures**."
+  },
+  {
+    "id": "ordinals-vs-token-standards",
+    "title": "Bitcoin Ordinals vs account-model token standards",
+    "level": "intermediate",
+    "track": "nfts-ordinals",
+    "readingTimeMin": 7,
+    "summary": "Different UTXO vs account semantics affect fees, indexing, and custody.",
+    "tags": [
+      "bitcoin",
+      "solana"
+    ],
+    "resourceLinks": [
+      {
+        "label": "Bitcoin developer docs",
+        "href": "https://developer.bitcoin.org/"
+      }
+    ],
+    "contentMd": "# Ordinals vs ERC-style tokens\n\n**Ordinals** inscribe data into Bitcoin transaction witnesses; indexing matters for wallets. **Account-model** chains track balances in contract state.\n\nCustody, **fee markets**, and **bridges** differ materially — compare engineering costs before fundraising narratives."
+  },
+  {
+    "id": "desci-grants-reproducibility",
+    "title": "Decentralized science (DeSci) — grants and reproducibility",
+    "level": "intermediate",
+    "track": "desci",
+    "readingTimeMin": 8,
+    "summary": "How milestone grants, open protocols, and auditability interact.",
+    "tags": [
+      "desci",
+      "grants"
+    ],
+    "resourceLinks": [
+      {
+        "label": "NIH — reproducibility",
+        "href": "https://www.nih.gov/research-training/reproducibility"
+      }
+    ],
+    "contentMd": "# DeSci building blocks\n\nCommon themes:\n\n1. **Transparent milestones** instead of opaque promises\n2. **Open methods** where ethically possible\n3. **Independent replication** incentives\n\nTechnology does not replace **IRB**, **biosafety**, or **export controls**."
+  },
+  {
+    "id": "funding-milestones-dao",
+    "title": "DAO treasuries, milestones, and dilution awareness",
+    "level": "advanced",
+    "track": "funding-grants",
+    "readingTimeMin": 9,
+    "summary": "How communities allocate pools and measure delivery risk.",
+    "tags": [
+      "treasury",
+      "milestones"
+    ],
+    "resourceLinks": [
+      {
+        "label": "SEC — investor bulletin",
+        "href": "https://www.investor.gov/introduction-investing/investing-basics/glossary"
+      }
+    ],
+    "contentMd": "# Funding mechanics\n\nTreasuries fund **roadmaps** via proposals. Milestone releases reduce **completion risk** but require **verification**.\n\nUnderstand **token emissions**, **vesting**, and **liquidity** before sizing exposure."
+  },
+  {
+    "id": "bioip-biobank-incentives",
+    "title": "Biobank incentives and participant alignment",
+    "level": "advanced",
+    "track": "bio-ip",
+    "readingTimeMin": 8,
+    "summary": "Ethics, consent, and incentive design for specimen and data networks.",
+    "tags": [
+      "biobank",
+      "ethics"
+    ],
+    "resourceLinks": [
+      {
+        "label": "HHS — informed consent FAQs",
+        "href": "https://www.hhs.gov/ohrp/regulations-and-policy/guidance/faq/informed-consent/index.html"
+      }
+    ],
+    "contentMd": "# Biobank incentives\n\nEffective programs pair **clear consent**, **withdrawal rights**, and **benefit-sharing** transparency. Tokens (if used) must map to **enforceable policies** and jurisdictional rules.\n\nNever treat tokens as regulated investment advice."
+  },
+  {
+    "id": "funding-research-token-diligence",
+    "title": "Due diligence on research-linked tokens",
+    "level": "advanced",
+    "track": "funding-grants",
+    "readingTimeMin": 10,
+    "summary": "A checklist for paperwork, counterparties, and technical claims — educational only.",
+    "tags": [
+      "risk",
+      "compliance"
+    ],
+    "resourceLinks": [
+      {
+        "label": "FINRA — avoiding fraud",
+        "href": "https://www.finra.org/investors/insights/how-avoid-investment-scams"
+      }
+    ],
+    "contentMd": "# Diligence checklist\n\n1. **Issuers & jurisdiction** — who can be held accountable?\n2. **Securities characterization** — consult qualified counsel.\n3. **Technical audit** — open repos vs closed IP.\n4. **Liquidity & custody** — exchange listing vs OTC.\n\nThis hub is **educational**, not investment, legal, or medical advice."
   }
 ]

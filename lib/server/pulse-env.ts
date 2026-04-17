@@ -52,3 +52,16 @@ export function pulseSseIntervalMs(): number {
 export function pulseStreamBypassCache(): boolean {
   return process.env.PULSE_STREAM_BYPASS_CACHE === "true" || process.env.PULSE_STREAM_BYPASS_CACHE === "1";
 }
+
+/** LAN/dev only: allow POST /api/pulse/mas-task without internal key (never enable in production). */
+export function pulseAllowOpenMasProxy(): boolean {
+  return process.env.PULSE_ALLOW_OPEN_MAS_PROXY === "true" || process.env.PULSE_ALLOW_OPEN_MAS_PROXY === "1";
+}
+
+/** Server-side auth for Pulse → MAS proxy routes. Compare with `x-pulse-internal-key` header. */
+export function verifyPulseInternalKey(headerValue: string | null | undefined): boolean {
+  if (pulseAllowOpenMasProxy()) return true;
+  const secret = process.env.PULSE_MAS_PROXY_SECRET?.trim();
+  if (!secret) return false;
+  return (headerValue ?? "").trim() === secret;
+}

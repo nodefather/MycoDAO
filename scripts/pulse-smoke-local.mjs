@@ -128,6 +128,15 @@ for (const [p, label] of paths) {
   if (!pass) ok = false;
 }
 
+const passHealth = await expectJson(`${base}/api/health?deep=1`, "health_deep");
+if (!passHealth) ok = false;
+
+const passConfig = await expectJson(`${base}/api/pulse/config-status`, "config_status");
+if (!passConfig) ok = false;
+
+const passMasInfo = await expectJson(`${base}/api/pulse/mas-task`, "mas_task_get");
+if (!passMasInfo) ok = false;
+
 const sseOn =
   process.env.NEXT_PUBLIC_PULSE_SSE === "1" || process.env.NEXT_PUBLIC_PULSE_SSE === "true";
 if (sseOn) {

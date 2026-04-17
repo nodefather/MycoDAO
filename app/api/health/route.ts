@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { masApiBase, mindexApiBase } from "@/lib/server/pulse-env";
+import { masApiBase, mindexApiBase, natureOsApiBase } from "@/lib/server/pulse-env";
 
 export const dynamic = "force-dynamic";
 
@@ -41,6 +41,28 @@ export async function GET(req: NextRequest) {
     }
   } else {
     backends.mindex = { configured: false };
+  }
+
+  const nature = natureOsApiBase();
+  if (nature) {
+    const candidates = [`${nature}/health`, `${nature}/api/health`];
+    let lastStatus = 0;
+    let reachable = false;
+    for (const u of candidates) {
+      try {
+        const r = await fetch(u, { cache: "no-store", signal: AbortSignal.timeout(4000) });
+        lastStatus = r.status;
+        if (r.ok) {
+          reachable = true;
+          break;
+        }
+      } catch {
+        /* try next path */
+      }
+    }
+    backends.natureos = { configured: true, reachable, status: lastStatus || undefined };
+  } else {
+    backends.natureos = { configured: false };
   }
 
   return NextResponse.json({ ...body, backends });

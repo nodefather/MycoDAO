@@ -17,6 +17,7 @@
     "figma:export": "node scripts/export-figma-assets.mjs"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.49.1",
     "lightweight-charts": "^4.2.1",
     "next": "^14.2.0",
     "react": "^18.2.0",

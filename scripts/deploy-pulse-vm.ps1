@@ -70,8 +70,8 @@ git checkout $Branch
 git reset --hard origin/$Branch
 docker compose build --no-cache mycodao
 docker compose up -d
-docker compose --profile tunnel up -d
-docker compose ps
+docker compose --env-file .env.production --profile tunnel up -d
+docker compose --env-file .env.production ps
 "@
 # OpenSSH on Windows passes CRLF to remote bash — normalize to LF
 $bash = $bash -replace "`r`n", "`n"

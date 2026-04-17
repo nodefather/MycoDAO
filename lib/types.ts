@@ -63,6 +63,21 @@ export type PodcastEpisode = {
   publishedAt: string;
 };
 
+/** Curriculum grouping for Pulse Learn filters and badges. */
+export type LearnTrack =
+  | "markets-basics"
+  | "fungi-mycology"
+  | "bio-ip"
+  | "nfts-ordinals"
+  | "desci"
+  | "funding-grants"
+  | "governance";
+
+export type LearnResourceLink = {
+  label: string;
+  href: string;
+};
+
 export type LearnModule = {
   id: string;
   title: string;
@@ -71,6 +86,10 @@ export type LearnModule = {
   summary: string;
   tags: string[];
   contentMd: string;
+  /** Primary curriculum track (defaults to markets-basics if omitted in legacy data). */
+  track?: LearnTrack;
+  /** External references — documentation, standards, neutral primers (not endorsements). */
+  resourceLinks?: LearnResourceLink[];
 };
 
 export type ResearchFundingMetrics = {
