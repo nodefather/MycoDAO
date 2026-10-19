@@ -36,7 +36,7 @@ minutes: 7
 track: fungi-mycology
 summary: How to collect specimens so they are scientifically useful and legally clean, including permits and benefit-sharing.
 tags: collection, provenance, permits, nagoya protocol
-resources: Nagoya Protocol on Access and Benefit-sharing | https://www.cbd.int/abs/; NAMA collecting guidance | https://namyco.org
+resources: Nagoya Protocol on Access and Benefit-sharing | https://www.cbd.int/abs/
 +++
 ## Provenance is value
 

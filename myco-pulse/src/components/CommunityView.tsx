@@ -1,16 +1,8 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Users, Handshake, Radio, BookOpen } from "lucide-react";
 import { cn } from "../lib/utils";
 import { useQueryParam, writeQuery } from "../lib/spaQuery";
-import {
-  fetchMedia,
-  fetchOrganizations,
-  isV1Failure,
-  type MediaItem,
-  type Organization,
-  type OrgRelationship,
-  type OrgType,
-} from "../lib/mycodaoV1";
+import { fetchMedia, isV1Failure, type MediaItem } from "../lib/mycodaoV1";
 import { fetchPulsePodcasts, type PulsePodcastEpisode } from "../lib/pulseApi";
 import { EmptyNote, ExternalAction } from "./mycodao/V1Primitives";
 import { RealmsDaoHub } from "./RealmsDaoHub";
@@ -23,20 +15,6 @@ const SECTIONS = [
   { id: "learn", label: "Learn", icon: BookOpen },
 ] as const;
 type SectionId = (typeof SECTIONS)[number]["id"];
-
-const TYPE_LABEL: Record<OrgType, string> = {
-  society: "Society",
-  lab: "Lab",
-  grower: "Grower",
-  funder: "Funder",
-  dao: "DAO",
-  other: "Other",
-};
-const RELATIONSHIP_LABEL: Record<OrgRelationship, string> = {
-  independent_resource: "Independent resource",
-  documented_collaborator: "Documented collaborator",
-  funding_recipient: "Funding recipient",
-};
 
 function isSection(value: string | null): value is SectionId {
   return SECTIONS.some((s) => s.id === value);
@@ -57,7 +35,7 @@ export function CommunityView({ learn, initialSection = "organizations" }: Commu
       <header className="flex flex-col gap-1">
         <h1 className="text-xl sm:text-2xl md:text-3xl font-black uppercase tracking-tight">Community</h1>
         <p className="text-sm text-white/60">
-          MycoDAO organizations, the mycological partners you can support directly, media, and learning.
+          MycoDAO organizations, ecosystem partners, media, and learning.
         </p>
       </header>
 
@@ -89,100 +67,57 @@ export function CommunityView({ learn, initialSection = "organizations" }: Commu
   );
 }
 
+const MYCOSOFT_PARTNER = {
+  name: "Mycosoft",
+  logoUrl: "/assets/figma/exports/Partner_MycoSoft_2490-2064.png",
+  siteUrl: "https://mycosoft.com",
+  blurb:
+    "Mycosoft builds the MINDEX data platform, MycoBrain devices, and the software stack that powers MycoDAO Blocks, FungIP, and decentralized science tooling.",
+};
+
+const PARTNER_INQUIRY_MAIL = "partners@mycosoft.com";
+
 function PartnersSection() {
-  const [orgs, setOrgs] = useState<Organization[] | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [type, setType] = useState<OrgType | null>(null);
-  const [relationship, setRelationship] = useState<OrgRelationship | null>(null);
-
-  useEffect(() => {
-    let active = true;
-    fetchOrganizations().then((result) => {
-      if (!active) return;
-      if (isV1Failure(result)) setError(result.message);
-      else setOrgs(result.data.items);
-    });
-    return () => {
-      active = false;
-    };
-  }, []);
-
-  const types = useMemo(() => Array.from(new Set((orgs ?? []).map((o) => o.org_type))), [orgs]);
-  const relationships = useMemo(() => Array.from(new Set((orgs ?? []).map((o) => o.relationship))), [orgs]);
-  const shown = (orgs ?? []).filter((o) => (!type || o.org_type === type) && (!relationship || o.relationship === relationship));
-
   return (
     <section className="flex flex-col gap-4">
       <div>
-        <h2 className="text-lg font-black uppercase tracking-tight">Mycological organizations you can support directly</h2>
-        <p className="text-sm text-white/60">Explore their official resources, membership programs and ways to contribute.</p>
+        <h2 className="text-lg font-black uppercase tracking-tight">Ecosystem partners</h2>
+        <p className="text-sm text-white/60">
+          Registered partners appear here after MycoDAO review. We do not list third-party societies or clubs unless they have a signed partnership on file.
+        </p>
       </div>
-      {error ? <EmptyNote title="Partners unavailable" message={error} /> : null}
-      {!orgs && !error ? <p className="text-sm text-white/50">Loading partners…</p> : null}
-      {orgs ? (
-        <>
-          <FilterRow label="Type" value={type} options={types} labels={TYPE_LABEL} onChange={setType} />
-          <FilterRow label="Relationship" value={relationship} options={relationships} labels={RELATIONSHIP_LABEL} onChange={setRelationship} />
-          {shown.length === 0 ? <EmptyNote message="No partners match these filters." /> : null}
-          <ul className="flex flex-col divide-y divide-white/10 border border-white/10">
-            {shown.map((o) => (
-              <li key={o.id} className="flex flex-col gap-2 p-4 sm:flex-row sm:items-start">
-                <div className="h-10 w-10 shrink-0 overflow-hidden bg-white/5 flex items-center justify-center text-sm font-black text-white/60">
-                  {o.logo_url ? <img src={o.logo_url} alt="" className="h-10 w-10 object-contain" /> : o.name.slice(0, 1)}
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className="font-bold text-white">{o.name}</span>
-                    <span className="border border-white/20 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white/70">
-                      {RELATIONSHIP_LABEL[o.relationship]}
-                    </span>
-                  </div>
-                  <p className="text-[11px] uppercase tracking-widest text-white/40">
-                    {TYPE_LABEL[o.org_type]}
-                    {o.region ? ` · ${o.region}` : ""}
-                  </p>
-                  <p className="mt-1 text-sm text-white/70">{o.relevance_reason}</p>
-                  <div className="flex flex-wrap gap-x-4">
-                    <ExternalAction href={o.official_url}>Official site</ExternalAction>
-                    {o.support_url ? <ExternalAction href={o.support_url}>{o.support_label ?? "Ways to support"}</ExternalAction> : null}
-                    {o.relationship_evidence_uri ? <ExternalAction href={o.relationship_evidence_uri}>Relationship evidence</ExternalAction> : null}
-                  </div>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </>
-      ) : null}
+      <ul className="flex flex-col gap-3 border border-white/10">
+        <li className="flex flex-col gap-3 p-4 sm:flex-row sm:items-start">
+          <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden bg-white/5">
+            <img src={MYCOSOFT_PARTNER.logoUrl} alt="" className="h-12 w-12 object-contain" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="font-bold text-white">{MYCOSOFT_PARTNER.name}</span>
+              <span className="border border-myco-accent/40 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-myco-accent">
+                Founding partner
+              </span>
+            </div>
+            <p className="mt-1 text-sm text-white/70">{MYCOSOFT_PARTNER.blurb}</p>
+            <ExternalAction href={MYCOSOFT_PARTNER.siteUrl}>Visit Mycosoft</ExternalAction>
+          </div>
+        </li>
+        <li className="flex flex-col gap-3 border-t border-white/10 p-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="font-bold text-white">Join and become a partner</p>
+            <p className="mt-1 text-sm text-white/60">
+              Labs, growers, funders, and media teams can apply to co-build programs on MycoDAO Blocks.
+            </p>
+          </div>
+          <a
+            href={`mailto:${PARTNER_INQUIRY_MAIL}?subject=MycoDAO%20Blocks%20partnership%20inquiry`}
+            className="inline-flex min-h-[44px] items-center justify-center border border-myco-accent bg-myco-accent/10 px-4 text-xs font-bold uppercase tracking-widest text-myco-accent touch-manipulation hover:bg-myco-accent/20"
+          >
+            Apply to partner
+          </a>
+        </li>
+      </ul>
     </section>
-  );
-}
-
-interface FilterRowProps<T extends string> {
-  label: string;
-  value: T | null;
-  options: T[];
-  labels: Record<T, string>;
-  onChange: (value: T | null) => void;
-}
-
-function FilterRow<T extends string>({ label, value, options, labels, onChange }: FilterRowProps<T>) {
-  return (
-    <div className="flex flex-wrap items-center gap-2">
-      <span className="w-full text-[10px] font-bold uppercase tracking-widest text-white/45 sm:w-auto sm:mr-2">{label}</span>
-      {[null, ...options].map((option) => (
-        <button
-          key={option ?? "all"}
-          type="button"
-          onClick={() => onChange(option)}
-          className={cn(
-            "min-h-[44px] px-3 text-[11px] font-bold uppercase tracking-widest border touch-manipulation",
-            value === option ? "border-myco-accent text-myco-accent bg-myco-accent/10" : "border-white/10 text-white/60",
-          )}
-        >
-          {option ? labels[option] : "All"}
-        </button>
-      ))}
-    </div>
   );
 }
 
